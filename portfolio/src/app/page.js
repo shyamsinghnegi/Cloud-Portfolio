@@ -1,11 +1,7 @@
 "use client"
-import { useContext } from "react"
-import Nav from "./components/Nav"
-import { NavCtx } from "./nav-context"
 import "./styles/home.css"
 
 export default function Page() {
-  const navigate = useContext(NavCtx)
   return (
     <div className="home">
       <div className="hero-left">
@@ -30,10 +26,6 @@ export default function Page() {
           <span>28°36′N 77°12′E</span>
         </div>
 
-      </div>
-
-      <div className="hero-right stage-el" style={{ '--index': 1 }}>
-        <Nav onNavigate={navigate} />
       </div>
     </div>
   )

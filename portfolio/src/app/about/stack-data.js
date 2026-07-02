@@ -2,10 +2,10 @@ const DEVICON = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons"
 const logo = (s, f) => `${DEVICON}/${s}/${f}.svg`
 
 export const CATS = [
-  { id: "cloud",    label: "Cloud",       fx: 0.30, fy: 0.32 },
-  { id: "frontend", label: "Frontend",    fx: 0.70, fy: 0.30 },
-  { id: "backend",  label: "Backend",     fx: 0.31, fy: 0.70 },
-  { id: "devops",   label: "DevOps / CI", fx: 0.69, fy: 0.70 },
+  { id: "cloud",    label: "Cloud",       fx: 0.28, fy: 0.20 },
+  { id: "frontend", label: "Frontend",    fx: 0.72, fy: 0.18 },
+  { id: "backend",  label: "Backend",     fx: 0.29, fy: 0.82 },
+  { id: "devops",   label: "DevOps / CI", fx: 0.71, fy: 0.84 },
 ]
 
 export const TECH = [

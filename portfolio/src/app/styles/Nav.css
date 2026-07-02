@@ -1,11 +1,32 @@
 .nav-expanded {
   position: absolute;
-  top: clamp(40px, 9vh, 96px);
+  top: 50%;
   right: clamp(8px, 2vw, 28px);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   z-index: 4;
+  opacity: 0;
+  transform: translateY(calc(-50% - 14px));
+  pointer-events: none;
+  transition: opacity var(--duration-transition) var(--ease-out-expo),
+              transform var(--duration-transition) var(--ease-out-expo);
+}
+.nav-expanded.show {
+  opacity: 1;
+  transform: translateY(-50%);
+  pointer-events: auto;
+}
+@keyframes navExpandedIntro {
+  from { opacity: 0; transform: translateY(calc(-50% - 14px)); }
+  to   { opacity: 1; transform: translateY(-50%); }
+}
+.home-intro .nav-expanded.show {
+  transition: none;
+  animation: navExpandedIntro var(--duration-transition) var(--ease-out-expo) 900ms backwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-intro .nav-expanded.show { animation: none; }
 }
 .nav-expanded .nav-head {
   display: flex;
@@ -96,18 +117,36 @@
   backdrop-filter: blur(6px);
   color: var(--ink-black);
   cursor: pointer;
-  transition: transform var(--duration-interaction) var(--ease-out-expo),
-              background var(--duration-interaction) var(--ease-out-expo),
-              border-color var(--duration-interaction) var(--ease-out-expo);
+  overflow: hidden;
+  transition: border-color var(--duration-interaction) var(--ease-out-expo);
 }
-.glass-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; }
-.glass-icon:hover { transform: translateY(-2px); background: var(--accent-orange); color: var(--canvas); border-color: var(--accent-orange); }
-.glass-icon.active,
-.glass-icon.active:hover {
+.glass-icon svg { position: relative; z-index: 1; width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+.glass-icon.active {
   background: var(--accent-orange);
   border-color: var(--accent-gold);
   color: var(--canvas);
-  transform: none;
+}
+
+.gi-wash {
+  position: absolute;
+  left: var(--wash-x, 50%);
+  top: var(--wash-y, 50%);
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent-orange);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+.glass-icon.washing .gi-wash {
+  animation: giWash 480ms var(--ease-out-expo) forwards;
+}
+@keyframes giWash {
+  0%   { transform: translate(-50%, -50%) scale(0); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(16); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glass-icon.washing .gi-wash { animation: none; }
 }
 .glass-icon .gi-tip {
   position: absolute; left: calc(100% + 20px); top: 50%;
@@ -123,9 +162,35 @@
 }
 .glass-icon:hover .gi-tip { opacity: 1; }
 
-.is-home .nav-collapsed { display: none; }
-
 @media (max-width: 920px) {
+  .app:not(.is-home) .nav-expanded { display: none; }
+  .is-home .nav-collapsed { display: none; }
+
+  .nav-expanded {
+    position: fixed;
+    left: 0; right: 0;
+    top: auto;
+    bottom: clamp(64px, 13vh, 110px);
+    align-items: center;
+    transform: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-transition) var(--ease-out-expo);
+  }
+  .nav-expanded.show { opacity: 1; pointer-events: auto; transform: none; }
+  @keyframes navExpandedIntroMobile {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .home-intro .nav-expanded.show {
+    transition: none;
+    animation: navExpandedIntroMobile var(--duration-transition) var(--ease-out-expo) 900ms backwards;
+  }
+  .nav-expanded .nav-head { display: none; }
+  .nav-list { align-items: center; gap: 2px; }
+  .nav-link { justify-content: center; text-align: center; }
+  .nav-link .lbl { font-size: clamp(1.25rem, 5.5vw, 1.7rem); }
+
   .nav-collapsed {
     flex-direction: row;
     width: auto; height: auto;
@@ -134,6 +199,7 @@
     bottom: clamp(14px, 2.6vh, 22px);
     transform: translateX(-50%);
     opacity: 1;
+    pointer-events: auto;
     gap: 4px;
     padding: 7px 9px;
     border: 1px solid var(--warm-gray);
@@ -151,7 +217,6 @@
     background: transparent;
     backdrop-filter: none;
   }
-  .glass-icon:hover { transform: none; background: transparent; color: var(--ink-black); border-color: transparent; }
   .glass-icon.active,
   .glass-icon.active:hover {
     background: var(--accent-orange);

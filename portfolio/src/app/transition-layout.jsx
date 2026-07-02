@@ -24,6 +24,14 @@ function isProjectDetail(p) {
   return /^\/projects\/[^/]+/.test(p)
 }
 
+const BG_VARIANT = {
+  home:     "home",
+  about:    "plain",
+  projects: "plain",
+  hobbies:  "plain",
+  contact:  "plain",
+}
+
 export default function TransitionLayout({ children }) {
   const pathname  = usePathname()
   const router    = useRouter()
@@ -70,16 +78,16 @@ export default function TransitionLayout({ children }) {
 
   return (
     <NavCtx.Provider value={navigate}>
-      {!isDetail && <BgTexture />}
+      {!isDetail && <BgTexture variant={BG_VARIANT[section] ?? "plain"} />}
       <div className={`app${isHome ? " is-home" : ""}${isDetail ? " is-project-detail" : ""}${isHome && homeIntro ? " home-intro" : ""}`}>
-        {!isDetail && <div className={`bg-scrim${isHome && homeIntro ? " intro" : ""}`} aria-hidden="true" />}
+        {!isDetail && !isHome && <div className="bg-scrim" aria-hidden="true" />}
         {isHome && (
           <div className="chrome chrome--bottom">
             <span className="mono">AVAILABLE FOR WORK — 2026</span>
             <div className="barcode" />
           </div>
         )}
-        {!isDetail && <Nav collapsed currentSection={section} onNavigate={navigate} />}
+        {!isDetail && <Nav expanded={isHome} currentSection={section} onNavigate={navigate} />}
         <div key={section} className={`stage ${stageClass}`}>
           {children}
         </div>

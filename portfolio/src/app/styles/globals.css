@@ -64,19 +64,8 @@ img { display: block; max-width: 100%; }
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: rgba(4, 4, 9, 0.55);
+  background: rgba(4, 4, 9, 0.48);
   transition: background 300ms var(--ease-out-expo);
-}
-@keyframes scrimIntro {
-  0%   { background: rgba(4, 4, 9, 0); }
-  100% { background: rgba(4, 4, 9, 0.55); }
-}
-.bg-scrim.intro {
-  animation: scrimIntro 350ms var(--ease-out-expo) forwards;
-  animation-delay: 250ms;
-}
-@media (prefers-reduced-motion: reduce) {
-  .bg-scrim.intro { animation: none; }
 }
 
 #root { position: relative; z-index: 2; height: 100%; }
@@ -253,8 +242,8 @@ img { display: block; max-width: 100%; }
 .reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 400ms var(--ease-out-expo),
-              transform 400ms var(--ease-out-expo);
+  transition: opacity 650ms var(--ease-out-expo),
+              transform 650ms var(--ease-out-expo);
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 

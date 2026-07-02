@@ -2,14 +2,18 @@
 import { useEffect, useRef } from "react"
 import { CONSTELLATIONS } from "./constellations"
 
-const NUM_BG_STARS = 140
+const NUM_BG_STARS = 420
 const NUM_GIANT_STARS = 12
+const NUM_GALAXIES = 2
+const NUM_NEBULAS = 2
 const MAX_LIVE = 3
 
 function rand(min, max) { return min + Math.random() * (max - min) }
 
-export default function BgTexture() {
+export default function BgTexture({ variant = "home" }) {
   const canvasRef = useRef(null)
+  const variantRef = useRef(variant)
+  variantRef.current = variant
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -34,10 +38,10 @@ export default function BgTexture() {
     const bgStars = Array.from({ length: NUM_BG_STARS }, () => ({
       x: rand(-0.5, 1.5),
       y: Math.random(),
-      r: rand(0.5, 1.6),
+      r: 0.3 + Math.random() * Math.random() * 0.9,
       phase: rand(0, Math.PI * 2),
       speed: rand(0.4, 1.1),
-      base: rand(0.18, 0.55),
+      base: rand(0.16, 0.5),
     }))
 
     const GIANT_COLORS = ["255,120,110", "130,170,255", "255,210,110"]
@@ -46,12 +50,90 @@ export default function BgTexture() {
       return {
         x: rand(-0.5, 1.5),
         y: Math.random(),
-        r: rand(2, 3.4),
+        r: rand(1.2, 2.1),
         phase: rand(0, Math.PI * 2),
         speed: rand(0.25, 0.5),
         base: rand(0.5, 0.85),
         color,
         _glow: null,
+      }
+    })
+
+    const GALAXY_COLORS = [
+      "190,150,255", // violet
+      "255,150,170", // rose
+      "150,210,255", // cyan-blue
+      "255,190,120", // amber
+      "150,255,200", // teal-green
+      "255,140,220", // magenta
+    ]
+    const galaxies = Array.from({ length: NUM_GALAXIES }, () => {
+      const w = rand(70, 130)
+      const sprite = document.createElement("canvas")
+      sprite.width = w
+      sprite.height = w
+      const sctx = sprite.getContext("2d")
+      const color = GALAXY_COLORS[Math.floor(Math.random() * GALAXY_COLORS.length)]
+      const cx = w / 2, cy = w / 2
+      sctx.translate(cx, cy)
+      sctx.rotate(rand(0, Math.PI))
+      sctx.scale(1, rand(0.32, 0.5))
+      const grad = sctx.createRadialGradient(0, 0, 0, 0, 0, w / 2)
+      grad.addColorStop(0, `rgba(${color},0.4)`)
+      grad.addColorStop(0.35, `rgba(${color},0.16)`)
+      grad.addColorStop(0.7, `rgba(${color},0.05)`)
+      grad.addColorStop(1, `rgba(${color},0)`)
+      sctx.fillStyle = grad
+      sctx.beginPath()
+      sctx.arc(0, 0, w / 2, 0, Math.PI * 2)
+      sctx.fill()
+      return {
+        x: rand(-0.4, 1.4),
+        y: Math.random(),
+        w,
+        sprite,
+        driftMul: rand(0.15, 0.35),
+      }
+    })
+
+    const NEBULA_COLORS = [
+      "150,90,200",  // deep violet
+      "200,80,110",  // dusky rose
+      "70,110,200",  // steel blue
+      "80,160,150",  // sea green
+    ]
+    const nebulas = Array.from({ length: NUM_NEBULAS }, () => {
+      const w = rand(500, 850)
+      const sprite = document.createElement("canvas")
+      sprite.width = w
+      sprite.height = w
+      const sctx = sprite.getContext("2d")
+      const baseColor = NEBULA_COLORS[Math.floor(Math.random() * NEBULA_COLORS.length)]
+      const cx = w / 2, cy = w / 2
+
+      const blobCount = 3
+      for (let i = 0; i < blobCount; i++) {
+        const bx = cx + rand(-w * 0.22, w * 0.22)
+        const by = cy + rand(-w * 0.22, w * 0.22)
+        const br = rand(w * 0.22, w * 0.34)
+        const color = i === 0 ? baseColor : NEBULA_COLORS[Math.floor(Math.random() * NEBULA_COLORS.length)]
+        const grad = sctx.createRadialGradient(bx, by, 0, bx, by, br)
+        grad.addColorStop(0, `rgba(${color},0.16)`)
+        grad.addColorStop(0.4, `rgba(${color},0.08)`)
+        grad.addColorStop(0.75, `rgba(${color},0.02)`)
+        grad.addColorStop(1, `rgba(${color},0)`)
+        sctx.fillStyle = grad
+        sctx.beginPath()
+        sctx.arc(bx, by, br, 0, Math.PI * 2)
+        sctx.fill()
+      }
+
+      return {
+        x: rand(-0.3, 1.3),
+        y: rand(0.1, 0.9),
+        w,
+        sprite,
+        driftMul: rand(0.05, 0.12),
       }
     })
     let frameCount = 0
@@ -64,6 +146,30 @@ export default function BgTexture() {
 
     let comets = []
     let nextComet = rand(8, 14)
+
+    let drifters = []
+    let nextDrifterCheck = rand(150, 240)
+
+    function spawnDrifter(t) {
+      const fromLeft = Math.random() < 0.5
+      const y0 = rand(0.1, 0.45) * height
+      const speed = rand(60, 90)
+      const dirX = fromLeft ? 1 : -1
+      const bob = rand(0.3, 0.6)
+      const bobAmp = rand(6, 14)
+      const size = rand(13, 18)
+      drifters.push({
+        start: t,
+        duration: (width + size * 4) / speed,
+        x0: fromLeft ? -size * 2 : width + size * 2,
+        y0,
+        vx: speed * dirX,
+        dirX,
+        bob,
+        bobAmp,
+        size,
+      })
+    }
 
     function spawnComet(t) {
       const fromLeft = Math.random() < 0.5
@@ -107,7 +213,7 @@ export default function BgTexture() {
         const originX = rand(0.12, 0.84) * width
         const originY = rand(0.12, 0.78) * height
         const collides = live.some(c => {
-          const dx = c.originX - originX
+          const dx = c.originXFrac * width - originX
           const dy = c.originY - originY
           return Math.hypot(dx, dy) < (c.radius + radius + 60)
         })
@@ -119,7 +225,7 @@ export default function BgTexture() {
         def,
         size,
         radius,
-        originX: best.originX,
+        originXFrac: best.originX / width,
         originY: best.originY,
         start: t,
         fadeIn: 2.6,
@@ -139,6 +245,16 @@ export default function BgTexture() {
       ctx.fillRect(0, 0, width, height)
 
       const driftFrac = (t * DRIFT_PX_PER_SEC / width) % DRIFT_SPAN
+
+      nebulas.forEach(n => {
+        let x = ((n.x + driftFrac * n.driftMul + 0.5) % DRIFT_SPAN) - 0.5
+        ctx.drawImage(n.sprite, x * width - n.w / 2, n.y * height - n.w / 2)
+      })
+
+      galaxies.forEach(g => {
+        let x = ((g.x + driftFrac * g.driftMul + 0.5) % DRIFT_SPAN) - 0.5
+        ctx.drawImage(g.sprite, x * width - g.w / 2, g.y * height - g.w / 2)
+      })
 
       bgStars.forEach(s => {
         const tw = 0.5 + 0.5 * Math.sin(t * s.speed + s.phase)
@@ -212,9 +328,71 @@ export default function BgTexture() {
         ctx.fill()
       })
 
-      if (t >= nextSpawn && live.length < MAX_LIVE) {
-        spawnConstellation(t)
-        nextSpawn = t + rand(4, 8)
+      if (t >= nextDrifterCheck && drifters.length === 0) {
+        spawnDrifter(t)
+        nextDrifterCheck = t + rand(150, 240)
+      }
+      drifters = drifters.filter(d => (t - d.start) <= d.duration)
+      drifters.forEach(d => {
+        const age = t - d.start
+        const p = age / d.duration
+        const fade = p < 0.08 ? p / 0.08 : p > 0.9 ? Math.max(0, 1 - (p - 0.9) / 0.1) : 1
+        const x = d.x0 + d.vx * age
+        const y = d.y0 + Math.sin(age * d.bob) * d.bobAmp
+        const a = fade * 0.55
+
+        ctx.save()
+        ctx.translate(x, y)
+        ctx.globalAlpha = a
+        ctx.fillStyle = "#c8caf0"
+        ctx.strokeStyle = "#c8caf0"
+
+        const s = d.size
+        ctx.rotate(d.dirX > 0 ? -0.5 : 0.5)
+
+        // dish
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.ellipse(0, 0, s * 0.36, s * 0.36, 0, 0, Math.PI * 2)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.moveTo(-s * 0.3, -s * 0.14)
+        ctx.lineTo(s * 0.3, s * 0.14)
+        ctx.stroke()
+
+        // body, behind the dish
+        ctx.beginPath()
+        ctx.roundRect(-s * 0.1, s * 0.28, s * 0.2, s * 0.22, 1.5)
+        ctx.fill()
+
+        // angled booms
+        ctx.lineWidth = 0.9
+        ctx.beginPath()
+        ctx.moveTo(-s * 0.06, s * 0.32)
+        ctx.lineTo(-s * 0.5, s * 0.7)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.moveTo(s * 0.06, s * 0.32)
+        ctx.lineTo(s * 0.5, s * 0.7)
+        ctx.stroke()
+
+        // trailing magnetometer boom
+        ctx.globalAlpha = a * 0.6
+        ctx.beginPath()
+        ctx.moveTo(0, s * 0.5)
+        ctx.lineTo(s * 1.6, s * 1.9)
+        ctx.stroke()
+
+        ctx.restore()
+      })
+
+      if (variantRef.current === "home") {
+        if (t >= nextSpawn && live.length < MAX_LIVE) {
+          spawnConstellation(t)
+          nextSpawn = t + rand(4, 8)
+        }
+      } else {
+        live = []
       }
 
       live = live.filter(c => {
@@ -230,8 +408,9 @@ export default function BgTexture() {
         else if (age < c.fadeIn + c.hold) alpha = 1
         else alpha = Math.max(0, 1 - (age - c.fadeIn - c.hold) / c.fadeOut)
 
+        const originX = c.originXFrac * width + (t - c.start) * DRIFT_PX_PER_SEC
         const pts = c.def.stars.map(([nx, ny]) => [
-          c.originX + (nx - 0.5) * c.size,
+          originX + (nx - 0.5) * c.size,
           c.originY + (ny - 0.5) * c.size,
         ])
 

@@ -1,5 +1,4 @@
 "use client"
-import { useState, useEffect } from "react"
 
 const SECTIONS = [
   { id: "about",    label: "About Me",        ix: "01" },
@@ -26,25 +25,21 @@ const ALL_NAV = [
   )},
 ]
 
-export default function Nav({ onNavigate, collapsed = false, currentSection = "home" }) {
-  const [show, setShow] = useState(false)
-
-  useEffect(() => {
-    if (!collapsed) return
-    const t = setTimeout(() => setShow(true), 50)
-    return () => clearTimeout(t)
-  }, [collapsed])
-
-  if (!collapsed) {
-    return (
-      <nav className="nav-expanded">
+export default function Nav({ onNavigate, expanded = false, currentSection = "home" }) {
+  return (
+    <>
+      <nav className={`nav-expanded${expanded ? " show" : ""}`} aria-hidden={!expanded}>
         <div className="nav-head">
           <span className="mono">Navigation — 04</span>
         </div>
         <ul className="nav-list">
           {SECTIONS.map((s) => (
             <li key={s.id}>
-              <button className="nav-link" onClick={() => onNavigate(s.id)}>
+              <button
+                className="nav-link"
+                onClick={() => onNavigate(s.id)}
+                tabIndex={expanded ? 0 : -1}
+              >
                 <span className="arr">→</span>
                 <span className="lbl">{s.label}</span>
                 <span className="ix">{s.ix}</span>
@@ -53,22 +48,31 @@ export default function Nav({ onNavigate, collapsed = false, currentSection = "h
           ))}
         </ul>
       </nav>
-    )
-  }
 
-  return (
-    <nav className={`nav-collapsed ${show ? "show" : ""}`}>
-      {ALL_NAV.map((s) => (
-        <button
-          key={s.id}
-          className={`glass-icon ${currentSection === s.id ? "active" : ""}`}
-          onClick={() => onNavigate(s.id)}
-          aria-label={s.label}
-          aria-current={currentSection === s.id ? "page" : undefined}
-        >
-          {s.icon}
-        </button>
-      ))}
-    </nav>
+      <nav className={`nav-collapsed${!expanded ? " show" : ""}`} aria-hidden={expanded}>
+        {ALL_NAV.map((s) => (
+          <button
+            key={s.id}
+            className={`glass-icon ${currentSection === s.id ? "active" : ""}`}
+            onClick={(e) => {
+              const btn = e.currentTarget
+              const rect = btn.getBoundingClientRect()
+              btn.style.setProperty("--wash-x", `${e.clientX - rect.left}px`)
+              btn.style.setProperty("--wash-y", `${e.clientY - rect.top}px`)
+              btn.classList.remove("washing")
+              void btn.offsetWidth
+              btn.classList.add("washing")
+              onNavigate(s.id)
+            }}
+            aria-label={s.label}
+            aria-current={currentSection === s.id ? "page" : undefined}
+            tabIndex={expanded ? -1 : 0}
+          >
+            <span className="gi-wash" aria-hidden="true" />
+            {s.icon}
+          </button>
+        ))}
+      </nav>
+    </>
   )
 }

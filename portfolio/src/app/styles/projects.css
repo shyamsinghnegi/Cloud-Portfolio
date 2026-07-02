@@ -68,7 +68,7 @@
   height: clamp(400px, 52vh, 600px);
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+  transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
   perspective: 900px;
 }
 .bento-grid.visible { opacity: 1; transform: none; }

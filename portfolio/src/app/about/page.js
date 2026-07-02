@@ -35,7 +35,7 @@ const PATH = [
   },
   {
     period: "2025  — now", title: "Freelance Developer", place: "Self-employed",
-    note: "Building and shipping web apps for clients — frontend, backend and the deploy.", wide: true
+    note: "Building and shipping web apps for clients — frontend, backend and the deploy."
   },
 ]
 
@@ -224,11 +224,7 @@ export default function AboutPage() {
 
         <div ref={pathRef} className={`path-cards${pathIn ? " visible" : ""}`}>
           {PATH.map((p, i) => (
-            <div
-              key={p.title}
-              className={`path-card${p.wide ? " path-card--wide" : ""}`}
-              style={{ "--i": i }}
-            >
+            <div key={p.title} className="path-card" style={{ "--i": i }}>
               <span className="path-period">{p.period}</span>
               <h3 className="path-title">{p.title}</h3>
               <span className="path-place">{p.place}</span>
