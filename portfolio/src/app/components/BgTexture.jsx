@@ -205,7 +205,8 @@ export default function BgTexture({ variant = "home" }) {
       const choices = CONSTELLATIONS.filter(c => !usedNames.has(c.name))
       if (choices.length === 0) return
       const def = choices[Math.floor(Math.random() * choices.length)]
-      const size = rand(260, 460)
+      const isMobile = width < 640
+      const size = isMobile ? rand(140, 220) : rand(260, 460)
       const radius = boundingRadius(def, size)
 
       let best = null

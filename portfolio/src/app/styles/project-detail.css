@@ -33,6 +33,7 @@
   margin-bottom: clamp(36px, 6vh, 56px);
 }
 .detail-head .proj-status { margin-bottom: 14px; }
+.detail-head .proj-tags { justify-content: center; }
 
 .detail-title {
   font-family: var(--font-display);
