@@ -229,6 +229,12 @@
   outline: none;
   border-color: var(--accent-blue);
 }
+.form-error {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  color: var(--accent-orange);
+}
 
 .form-submit {
   position: relative;

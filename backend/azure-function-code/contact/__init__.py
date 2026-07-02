@@ -17,6 +17,10 @@ CORS_HEADERS = {
 
 EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
 MAX_LEN = {'name': 120, 'email': 200, 'subject': 200, 'message': 5000}
+ALLOWED_EMAIL_DOMAINS = {
+    'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com',
+    'icloud.com', 'live.com', 'aol.com', 'proton.me', 'protonmail.com',
+}
 
 
 def json_response(body, status_code):
@@ -36,8 +40,12 @@ def validate(data):
             return f'{field} is required'
         if len(value) > MAX_LEN[field]:
             return f'{field} is too long'
-    if not EMAIL_RE.match(data['email'].strip()):
+    email = data['email'].strip()
+    if not EMAIL_RE.match(email):
         return 'email is not valid'
+    domain = email.rsplit('@', 1)[-1].lower()
+    if domain not in ALLOWED_EMAIL_DOMAINS:
+        return 'please use a personal email from a major provider (Gmail, Yahoo, Outlook, etc.)'
     return None
 
 

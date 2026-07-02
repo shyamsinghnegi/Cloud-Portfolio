@@ -60,10 +60,38 @@ function ChannelCard({ c }) {
 
 const CONTACT_API_URL = process.env.NEXT_PUBLIC_CONTACT_API_URL
 
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
+const MAX_LEN = { name: 120, email: 200, subject: 200, message: 5000 }
+const ALLOWED_EMAIL_DOMAINS = new Set([
+  "gmail.com", "yahoo.com", "outlook.com", "hotmail.com",
+  "icloud.com", "live.com", "aol.com", "proton.me", "protonmail.com",
+])
+
 function fallbackToMailto(name, email, subject, message) {
   const body = `${message}\n\n—\n${name}\n${email}`
   const mailto = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
   window.location.href = mailto
+}
+
+function validate({ name, email, subject, message }) {
+  const errors = {}
+  if (!name.trim()) errors.name = "Name is required"
+  else if (name.length > MAX_LEN.name) errors.name = "Name is too long"
+
+  const trimmedEmail = email.trim()
+  if (!trimmedEmail) errors.email = "Email is required"
+  else if (!EMAIL_RE.test(trimmedEmail)) errors.email = "Enter a valid email"
+  else if (email.length > MAX_LEN.email) errors.email = "Email is too long"
+  else if (!ALLOWED_EMAIL_DOMAINS.has(trimmedEmail.split("@")[1].toLowerCase()))
+    errors.email = "Use a Gmail, Yahoo, Outlook, or similar personal email"
+
+  if (!subject.trim()) errors.subject = "Subject is required"
+  else if (subject.length > MAX_LEN.subject) errors.subject = "Subject is too long"
+
+  if (!message.trim()) errors.message = "Message is required"
+  else if (message.length > MAX_LEN.message) errors.message = "Message is too long"
+
+  return errors
 }
 
 export default function ContactPage() {
@@ -72,15 +100,28 @@ export default function ContactPage() {
   const [subject, setSubject] = useState("")
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState("idle")
+  const [errors, setErrors] = useState({})
+
+  function resetForm() {
+    setName("")
+    setEmail("")
+    setSubject("")
+    setMessage("")
+    setErrors({})
+  }
 
   async function onSubmit(e) {
     e.preventDefault()
-    if (!name.trim() || !email.trim() || !subject.trim() || !message.trim()) return
+    const nextErrors = validate({ name, email, subject, message })
+    setErrors(nextErrors)
+    if (Object.keys(nextErrors).length > 0) return
 
     setStatus("sending")
+    const values = { name, email, subject, message }
+    resetForm()
 
     if (!CONTACT_API_URL) {
-      fallbackToMailto(name, email, subject, message)
+      fallbackToMailto(values.name, values.email, values.subject, values.message)
       setStatus("sent")
       return
     }
@@ -89,12 +130,12 @@ export default function ContactPage() {
       const res = await fetch(`${CONTACT_API_URL}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, subject, message }),
+        body: JSON.stringify(values),
       })
       if (!res.ok) throw new Error(`Request failed: ${res.status}`)
       setStatus("sent")
     } catch (err) {
-      fallbackToMailto(name, email, subject, message)
+      fallbackToMailto(values.name, values.email, values.subject, values.message)
       setStatus("sent")
     }
   }
@@ -130,8 +171,10 @@ export default function ContactPage() {
                 value={name}
                 onChange={e => setName(e.target.value)}
                 placeholder="Your name"
+                maxLength={MAX_LEN.name}
                 required
               />
+              {errors.name && <span className="form-error">{errors.name}</span>}
             </label>
             <label className="form-field">
               <span>Email</span>
@@ -140,8 +183,10 @@ export default function ContactPage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="you@example.com"
+                maxLength={MAX_LEN.email}
                 required
               />
+              {errors.email && <span className="form-error">{errors.email}</span>}
             </label>
           </div>
 
@@ -152,8 +197,10 @@ export default function ContactPage() {
               value={subject}
               onChange={e => setSubject(e.target.value)}
               placeholder="What's this about?"
+              maxLength={MAX_LEN.subject}
               required
             />
+            {errors.subject && <span className="form-error">{errors.subject}</span>}
           </label>
 
           <label className="form-field">
@@ -163,8 +210,10 @@ export default function ContactPage() {
               onChange={e => setMessage(e.target.value)}
               placeholder="Tell me what you're building..."
               rows={5}
+              maxLength={MAX_LEN.message}
               required
             />
+            {errors.message && <span className="form-error">{errors.message}</span>}
           </label>
 
           <button
