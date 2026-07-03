@@ -1,5 +1,5 @@
 require("dotenv").config({ path: ".env.local" })
-const { CompanionConnector } = require("ytmdesktop-ts-companion")
+const { CompanionConnector, SocketState } = require("ytmdesktop-ts-companion")
 
 const HOST = process.env.YTMD_HOST || "127.0.0.1"
 const PORT = Number(process.env.YTMD_PORT || 9863)
@@ -15,6 +15,14 @@ if (!API_URL || !WRITE_SECRET) {
   console.error("Missing NOWPLAYING_API_URL or NOWPLAYING_WRITE_SECRET in .env.local")
   process.exit(1)
 }
+
+// The library's CompanionConnector constructor calls getMetadata() and re-throws
+// inside its own .catch(), producing an unhandled rejection whenever YTMDesktop
+// is unreachable (e.g. app closed). That's an expected, recoverable state here,
+// not a real crash — swallow it so the process stays alive and keeps retrying.
+process.on("unhandledRejection", err => {
+  console.error("Unhandled rejection (ignored):", err && err.message ? err.message : err)
+})
 
 // trackState: -1 unknown, 0 paused, 1 playing, 2 buffering
 const PLAYING_STATE = 1
@@ -74,8 +82,19 @@ async function main() {
   connector.setAuthToken(AUTH_TOKEN)
 
   connector.socketClient.addStateListener(onState)
-  connector.socketClient.addConnectionStateListener(connected => {
-    console.log(connected ? "Connected to YTMDesktop." : "Disconnected from YTMDesktop.")
+  connector.socketClient.addConnectionStateListener(state => {
+    console.log(`Socket state: ${state}`)
+    if (state === SocketState.CONNECTED) {
+      connector.restClient.getState().then(onState).catch(err => {
+        console.error("getState error:", err.message || err)
+      })
+    } else if (state === SocketState.DISCONNECTED || state === SocketState.ERROR) {
+      if (lastIsPlaying !== false) {
+        lastVideoId = null
+        lastIsPlaying = false
+        pushState({ isPlaying: false })
+      }
+    }
   })
   connector.socketClient.connect()
 

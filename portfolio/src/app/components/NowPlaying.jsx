@@ -112,10 +112,12 @@ export default function NowPlaying() {
     return () => clearTimeout(exitTimeoutRef.current)
   }, [data?.isPlaying])
 
-  // fresh reveal: whenever a track starts/changes (NOT on page navigation),
-  // show the full pill and (re)start the auto-collapse timer
+  // fresh reveal: whenever a track starts/changes, show the full pill and
+  // (re)start the auto-collapse timer. Does NOT react to hintActive clearing,
+  // so the widget resumes whatever state it was in before the hint appeared
+  // instead of forcing itself back open.
   useEffect(() => {
-    if (!data?.isPlaying || hintActive) return
+    if (!data?.isPlaying) return
     clearTimeout(collapseTimeoutRef.current)
     clearTimeout(morphTimeoutRef.current)
     setMorphing(null)
@@ -129,7 +131,7 @@ export default function NowPlaying() {
       }
     }, AUTO_COLLAPSE_MS)
     return () => clearTimeout(collapseTimeoutRef.current)
-  }, [data?.isPlaying, data?.title, data?.artist, hintActive])
+  }, [data?.isPlaying, data?.title, data?.artist])
 
   if (!mounted || hintActive) return null
 

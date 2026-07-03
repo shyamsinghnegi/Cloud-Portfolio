@@ -529,7 +529,7 @@
   .flip-hint {
     left: auto;
     right: clamp(14px, 3vw, 24px);
-    top: clamp(58px, 12vw, 70px);
+    top: clamp(44px, 9vw, 56px);
     transform: translateY(-8px);
     gap: 6px;
     padding: 6px 11px;
