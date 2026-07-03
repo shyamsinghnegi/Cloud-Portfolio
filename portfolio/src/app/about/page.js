@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import Lanyard from "./Lanyard"
 import ProfileCard from "./ProfileCard"
 import StackGraph from "./StackGraph"
@@ -8,6 +8,7 @@ import CertPreview from "./CertPreview"
 import ScrollCue from "../components/ScrollCue"
 import { useInView } from "../components/use-in-view"
 import { useTiltGlow } from "../components/use-tilt-glow"
+import { HintCtx } from "../hint-context"
 import "../styles/about.css"
 
 function useIsMobile(breakpoint = 920) {
@@ -113,6 +114,7 @@ export default function AboutPage() {
   const [pathRef, pathIn] = useInView({ rootMargin: "0px 0px -12% 0px" })
   const [certHeadRef, certHeadIn] = useInView()
   const [certRef, certIn] = useInView({ rootMargin: "0px 0px -12% 0px" })
+  const { setHintActive } = useContext(HintCtx)
 
   const [showCertHint, setShowCertHint] = useState(false)
   useEffect(() => {
@@ -128,6 +130,11 @@ export default function AboutPage() {
     const t2 = setTimeout(() => setShowFlipHint(false), 3000)
     return () => { clearTimeout(t); clearTimeout(t2) }
   }, [])
+
+  useEffect(() => {
+    setHintActive(showFlipHint || showCertHint)
+    return () => setHintActive(false)
+  }, [showFlipHint, showCertHint, setHintActive])
 
   return (
     <>

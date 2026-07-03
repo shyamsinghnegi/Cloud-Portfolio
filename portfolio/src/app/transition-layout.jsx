@@ -3,7 +3,9 @@ import { useState, useCallback, useRef, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import Nav from "./components/Nav"
 import BgTexture from "./components/BgTexture"
+import NowPlaying from "./components/NowPlaying"
 import { NavCtx } from "./nav-context"
+import { HintCtx } from "./hint-context"
 
 const PATHS = {
   home:     "/",
@@ -38,6 +40,7 @@ export default function TransitionLayout({ children }) {
   const [section,    setSection]    = useState(() => pathToSection(pathname))
   const [stageClass, setStageClass] = useState("")
   const [homeIntro,  setHomeIntro]  = useState(() => pathToSection(pathname) === "home")
+  const [hintActive, setHintActive] = useState(false)
   const busy     = useRef(false)
   const prevPath = useRef(pathname)
 
@@ -56,6 +59,7 @@ export default function TransitionLayout({ children }) {
     if (pathname === prevPath.current) return
     prevPath.current = pathname
     setSection(pathToSection(pathname))
+    setHintActive(false)
     const raf = requestAnimationFrame(() => {
       setStageClass("is-entering")
       setTimeout(() => {
@@ -78,20 +82,23 @@ export default function TransitionLayout({ children }) {
 
   return (
     <NavCtx.Provider value={navigate}>
-      {!isDetail && <BgTexture variant={BG_VARIANT[section] ?? "plain"} />}
-      <div className={`app${isHome ? " is-home" : ""}${isDetail ? " is-project-detail" : ""}${isHome && homeIntro ? " home-intro" : ""}`}>
-        {!isDetail && !isHome && <div className="bg-scrim" aria-hidden="true" />}
-        {isHome && (
-          <div className="chrome chrome--bottom">
-            <span className="mono">AVAILABLE FOR WORK — 2026</span>
-            <div className="barcode" />
+      <HintCtx.Provider value={{ hintActive, setHintActive }}>
+        {!isDetail && <BgTexture variant={BG_VARIANT[section] ?? "plain"} />}
+        <div className={`app${isHome ? " is-home" : ""}${isDetail ? " is-project-detail" : ""}${isHome && homeIntro ? " home-intro" : ""}`}>
+          {!isDetail && !isHome && <div className="bg-scrim" aria-hidden="true" />}
+          {isHome && (
+            <div className="chrome chrome--bottom">
+              <span className="mono">AVAILABLE FOR WORK — 2026</span>
+              <div className="barcode" />
+            </div>
+          )}
+          {!isDetail && <Nav expanded={isHome} currentSection={section} onNavigate={navigate} />}
+          <div key={section} className={`stage ${stageClass}`}>
+            {children}
           </div>
-        )}
-        {!isDetail && <Nav expanded={isHome} currentSection={section} onNavigate={navigate} />}
-        <div key={section} className={`stage ${stageClass}`}>
-          {children}
         </div>
-      </div>
+        <NowPlaying />
+      </HintCtx.Provider>
     </NavCtx.Provider>
   )
 }

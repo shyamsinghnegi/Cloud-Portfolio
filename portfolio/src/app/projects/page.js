@@ -1,8 +1,9 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useRouter } from "next/navigation"
 import { useInView } from "../components/use-in-view"
 import { useTiltGlow } from "../components/use-tilt-glow"
+import { HintCtx } from "../hint-context"
 import { PROJECTS } from "./data"
 import "../styles/projects.css"
 
@@ -71,6 +72,7 @@ function ProjectCard({ p, className = "" }) {
 export default function ProjectsPage() {
   const [headRef, headIn] = useInView()
   const [gridRef, gridIn] = useInView({ rootMargin: "0px 0px -8% 0px" })
+  const { setHintActive } = useContext(HintCtx)
 
   const [showHint, setShowHint] = useState(false)
   useEffect(() => {
@@ -79,6 +81,11 @@ export default function ProjectsPage() {
     const t = setTimeout(() => setShowHint(false), 2600)
     return () => { cancelAnimationFrame(raf); clearTimeout(t) }
   }, [gridIn])
+
+  useEffect(() => {
+    setHintActive(showHint)
+    return () => setHintActive(false)
+  }, [showHint, setHintActive])
 
   return (
     <section className="proj-section stage-el">
