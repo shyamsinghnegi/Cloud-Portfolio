@@ -145,31 +145,6 @@
   white-space: nowrap;
 }
 
-/* per-icon hover micro-animations */
-.channel-linkedin .li-mark {
-  transition: transform 0.3s var(--ease-out-expo);
-  transform-origin: center;
-}
-.channel-linkedin:hover .li-mark { transform: scale(1.12); }
-
-.channel-email .mail-flap {
-  transition: transform 0.3s var(--ease-out-expo);
-  transform-origin: 12px 7px;
-}
-.channel-email:hover .mail-flap { transform: translateY(-2px) scaleY(0.7); }
-
-.channel-github .channel-icon svg {
-  transition: transform 0.4s var(--ease-out-expo);
-  transform-origin: 50% 20%;
-}
-.channel-github:hover .channel-icon svg { transform: rotate(-8deg) translateY(-2px); }
-
-.channel-steam .channel-icon svg {
-  transition: transform 0.5s var(--ease-out-expo);
-  transform-origin: center;
-}
-.channel-steam:hover .channel-icon svg { transform: rotate(35deg); }
-
 .form-panel {
   border: 1px solid var(--warm-gray);
   border-radius: 16px;
