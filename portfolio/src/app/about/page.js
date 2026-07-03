@@ -139,7 +139,7 @@ export default function AboutPage() {
   return (
     <>
       <section className="about-hero stage-el">
-        <div className={`cert-hint${showFlipHint ? " show" : ""}`} role="status">
+        <div className={`flip-hint${showFlipHint ? " show" : ""}`} role="status">
           <span className="cert-hint-dot" />
           Tap the card to flip it
         </div>
@@ -244,6 +244,11 @@ export default function AboutPage() {
       </section>
 
       <section className="cert-section">
+        <div className={`cert-hint${showCertHint ? " show" : ""}`} role="status">
+          <span className="cert-hint-dot" />
+          {isMobile ? "Tap a card to view the certificate" : "Hover a card to view the certificate"}
+        </div>
+
         <div
           ref={certHeadRef}
           className={`cert-head reveal${certHeadIn ? " visible" : ""}`}
@@ -262,12 +267,7 @@ export default function AboutPage() {
           {CERTS.map((c, i) => (
             <CertCard key={c.title} c={c} i={i} isMobile={isMobile} />
           ))}
-        <div className={`cert-hint${showCertHint ? " show" : ""}`} role="status">
-          <span className="cert-hint-dot" />
-          {isMobile ? "Tap a card to view the certificate" : "Hover a card to view the certificate"}
         </div>
-        </div>
-
       </section>
     </>
   )

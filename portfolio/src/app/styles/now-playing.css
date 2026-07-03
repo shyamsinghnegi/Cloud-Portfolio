@@ -7,7 +7,7 @@
   align-items: center;
   gap: 10px;
   max-width: min(280px, calc(100vw - 32px));
-  padding: 8px 14px 8px 8px;
+  padding: 8px 14px;
   border: 1px solid var(--warm-gray);
   border-radius: 999px;
   background: var(--panel);
@@ -75,31 +75,6 @@
   min-width: 0;
   color: var(--ink-black);
   text-decoration: none;
-}
-
-.now-playing-collapse {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  margin-right: 2px;
-  border: none;
-  border-radius: 50%;
-  background: none;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
-  line-height: 1;
-  cursor: pointer;
-  transition: color 0.15s var(--ease-out-expo), background 0.15s var(--ease-out-expo);
-}
-.now-playing-collapse:hover,
-.now-playing-collapse:focus-visible {
-  color: var(--ink-black);
-  background: var(--canvas-deep);
-  outline: none;
 }
 
 .now-playing-disc {
@@ -268,7 +243,6 @@
   }
   .now-playing-link { gap: 7px; }
   .now-playing-art { width: 26px; height: 26px; }
-  .now-playing-collapse { width: 15px; height: 15px; font-size: 0.76rem; }
   .now-playing-label { font-size: 0.54rem; gap: 4px; }
   .now-playing-bars { height: 6px; }
   .now-playing-title { font-size: 0.7rem; }

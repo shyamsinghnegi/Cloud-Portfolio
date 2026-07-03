@@ -171,14 +171,6 @@ export default function NowPlaying() {
   function renderFullPill(morphClass) {
     return (
       <div key="full-pill" className={`now-playing${show ? " show" : ""}${morphClass}`}>
-        <button
-          type="button"
-          className="now-playing-collapse"
-          onClick={() => setMinimizedMorph(true)}
-          aria-label="Minimize now playing"
-        >
-          &#8211;
-        </button>
         <a
           href={data.songUrl || undefined}
           target="_blank"
