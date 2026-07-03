@@ -27,8 +27,14 @@ process.on("unhandledRejection", err => {
 // trackState: -1 unknown, 0 paused, 1 playing, 2 buffering
 const PLAYING_STATE = 1
 
+// The API marks a track stale after 180s of no update (see backend), so a
+// currently-playing track needs to be re-pushed well before then or long
+// songs make the widget disappear near the end even though nothing changed.
+const HEARTBEAT_MS = 90 * 1000
+
 let lastVideoId = null
 let lastIsPlaying = null
+let lastPlayingBody = null
 
 async function pushState(body) {
   try {
@@ -54,19 +60,21 @@ function onState(state) {
   lastIsPlaying = isPlaying
 
   if (!isPlaying) {
+    lastPlayingBody = null
     pushState({ isPlaying: false })
     return
   }
 
   const thumb = (video.thumbnails || []).slice(-1)[0]
-  pushState({
+  lastPlayingBody = {
     isPlaying: true,
     title: video.title,
     artist: video.author,
     album: video.album || null,
     albumImageUrl: thumb ? thumb.url : null,
     songUrl: video.id ? `https://music.youtube.com/watch?v=${video.id}` : null,
-  })
+  }
+  pushState(lastPlayingBody)
 }
 
 async function main() {
@@ -97,6 +105,10 @@ async function main() {
     }
   })
   connector.socketClient.connect()
+
+  setInterval(() => {
+    if (lastPlayingBody) pushState(lastPlayingBody)
+  }, HEARTBEAT_MS)
 
   process.on("SIGINT", () => {
     pushState({ isPlaying: false }).finally(() => process.exit(0))
