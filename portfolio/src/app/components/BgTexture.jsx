@@ -2,10 +2,10 @@
 import { useEffect, useRef } from "react"
 import { CONSTELLATIONS } from "./constellations"
 
-const NUM_BG_STARS = 420
+const NUM_BG_STARS = 700
 const NUM_GIANT_STARS = 12
-const NUM_GALAXIES = 2
-const NUM_NEBULAS = 2
+const NUM_GALAXIES = 5
+const NUM_NEBULAS = 5
 const MAX_LIVE = 3
 
 function rand(min, max) { return min + Math.random() * (max - min) }
@@ -37,25 +37,43 @@ export default function BgTexture({ variant = "home" }) {
 
     const bgStars = Array.from({ length: NUM_BG_STARS }, () => ({
       x: rand(-0.5, 1.5),
-      y: Math.random(),
+      y: rand(-0.5, 1.5),
       r: 0.3 + Math.random() * Math.random() * 0.9,
       phase: rand(0, Math.PI * 2),
       speed: rand(0.4, 1.1),
       base: rand(0.16, 0.5),
+      driftAngle: rand(0, Math.PI * 2),
+      driftMul: rand(0.7, 1.3),
     }))
 
+    const MIN_GIANT_DIST = 0.5
+    const giantPositions = []
+    for (let i = 0; i < NUM_GIANT_STARS; i++) {
+      let best = null
+      for (let attempt = 0; attempt < 20; attempt++) {
+        const gx = rand(-0.3, 1.3)
+        const gy = rand(-0.3, 1.3)
+        const collides = giantPositions.some(p => Math.hypot(p.x - gx, p.y - gy) < MIN_GIANT_DIST)
+        if (!collides) { best = { x: gx, y: gy }; break }
+        if (!best) best = { x: gx, y: gy }
+      }
+      giantPositions.push(best)
+    }
+
     const GIANT_COLORS = ["255,120,110", "130,170,255", "255,210,110"]
-    const giantStars = Array.from({ length: NUM_GIANT_STARS }, () => {
+    const giantStars = Array.from({ length: NUM_GIANT_STARS }, (_, gi) => {
       const color = GIANT_COLORS[Math.floor(Math.random() * GIANT_COLORS.length)]
       return {
-        x: rand(-0.5, 1.5),
-        y: Math.random(),
-        r: rand(1.2, 2.1),
+        x: giantPositions[gi].x,
+        y: giantPositions[gi].y,
+        r: rand(0.4, 0.7),
         phase: rand(0, Math.PI * 2),
         speed: rand(0.25, 0.5),
         base: rand(0.5, 0.85),
         color,
         _glow: null,
+        driftAngle: rand(0, Math.PI * 2),
+        driftMul: rand(0.7, 1.3),
       }
     })
 
@@ -67,8 +85,22 @@ export default function BgTexture({ variant = "home" }) {
       "150,255,200", // teal-green
       "255,140,220", // magenta
     ]
-    const galaxies = Array.from({ length: NUM_GALAXIES }, () => {
-      const w = rand(70, 130)
+    const galaxyPositions = []
+    const MIN_GALAXY_DIST = 0.35
+    for (let i = 0; i < NUM_GALAXIES; i++) {
+      let best = null
+      for (let attempt = 0; attempt < 20; attempt++) {
+        const gx = rand(-0.4, 1.4)
+        const gy = rand(-0.4, 1.4)
+        const collides = galaxyPositions.some(p => Math.hypot(p.x - gx, p.y - gy) < MIN_GALAXY_DIST)
+        if (!collides) { best = { x: gx, y: gy }; break }
+        if (!best) best = { x: gx, y: gy }
+      }
+      galaxyPositions.push(best)
+    }
+
+    const galaxies = Array.from({ length: NUM_GALAXIES }, (_, gi) => {
+      const w = rand(45, 85)
       const sprite = document.createElement("canvas")
       sprite.width = w
       sprite.height = w
@@ -78,21 +110,44 @@ export default function BgTexture({ variant = "home" }) {
       sctx.translate(cx, cy)
       sctx.rotate(rand(0, Math.PI))
       sctx.scale(1, rand(0.32, 0.5))
-      const grad = sctx.createRadialGradient(0, 0, 0, 0, 0, w / 2)
-      grad.addColorStop(0, `rgba(${color},0.4)`)
-      grad.addColorStop(0.35, `rgba(${color},0.16)`)
-      grad.addColorStop(0.7, `rgba(${color},0.05)`)
-      grad.addColorStop(1, `rgba(${color},0)`)
-      sctx.fillStyle = grad
+
+      // irregular disc: overlapping offset blobs instead of one clean ellipse
+      const blobCount = 5
+      for (let i = 0; i < blobCount; i++) {
+        const bAngle = rand(0, Math.PI * 2)
+        const bDist = rand(0, w * 0.22)
+        const bx = Math.cos(bAngle) * bDist
+        const by = Math.sin(bAngle) * bDist
+        const br = rand(w * 0.28, w * 0.5)
+        const grad = sctx.createRadialGradient(bx, by, 0, bx, by, br)
+        grad.addColorStop(0, `rgba(${color},${rand(0.14, 0.26)})`)
+        grad.addColorStop(0.35, `rgba(${color},0.09)`)
+        grad.addColorStop(0.7, `rgba(${color},0.025)`)
+        grad.addColorStop(1, `rgba(${color},0)`)
+        sctx.fillStyle = grad
+        sctx.beginPath()
+        sctx.arc(bx, by, br, 0, Math.PI * 2)
+        sctx.fill()
+      }
+
+      // bright core, dimming outward into the disc
+      const core = sctx.createRadialGradient(0, 0, 0, 0, 0, w * 0.22)
+      core.addColorStop(0, `rgba(255,252,245,0.75)`)
+      core.addColorStop(0.25, `rgba(255,250,240,0.4)`)
+      core.addColorStop(0.55, `rgba(${color},0.22)`)
+      core.addColorStop(1, `rgba(${color},0)`)
+      sctx.fillStyle = core
       sctx.beginPath()
-      sctx.arc(0, 0, w / 2, 0, Math.PI * 2)
+      sctx.arc(0, 0, w * 0.22, 0, Math.PI * 2)
       sctx.fill()
+
       return {
-        x: rand(-0.4, 1.4),
-        y: Math.random(),
+        x: galaxyPositions[gi].x,
+        y: galaxyPositions[gi].y,
         w,
         sprite,
         driftMul: rand(0.15, 0.35),
+        driftAngle: rand(0, Math.PI * 2),
       }
     })
 
@@ -102,8 +157,22 @@ export default function BgTexture({ variant = "home" }) {
       "70,110,200",  // steel blue
       "80,160,150",  // sea green
     ]
-    const nebulas = Array.from({ length: NUM_NEBULAS }, () => {
-      const w = rand(500, 850)
+    const nebulaPositions = []
+    const MIN_NEBULA_DIST = 0.45
+    for (let i = 0; i < NUM_NEBULAS; i++) {
+      let best = null
+      for (let attempt = 0; attempt < 20; attempt++) {
+        const nx = rand(-0.3, 1.3)
+        const ny = rand(-0.3, 1.3)
+        const collides = nebulaPositions.some(p => Math.hypot(p.x - nx, p.y - ny) < MIN_NEBULA_DIST)
+        if (!collides) { best = { x: nx, y: ny }; break }
+        if (!best) best = { x: nx, y: ny }
+      }
+      nebulaPositions.push(best)
+    }
+
+    const nebulas = Array.from({ length: NUM_NEBULAS }, (_, ni) => {
+      const w = rand(500, 1300)
       const sprite = document.createElement("canvas")
       sprite.width = w
       sprite.height = w
@@ -129,13 +198,15 @@ export default function BgTexture({ variant = "home" }) {
       }
 
       return {
-        x: rand(-0.3, 1.3),
-        y: rand(0.1, 0.9),
+        x: nebulaPositions[ni].x,
+        y: nebulaPositions[ni].y,
         w,
         sprite,
         driftMul: rand(0.05, 0.12),
+        driftAngle: rand(0, Math.PI * 2),
       }
     })
+
     let frameCount = 0
 
     const DRIFT_PX_PER_SEC = 6
@@ -206,7 +277,7 @@ export default function BgTexture({ variant = "home" }) {
       if (choices.length === 0) return
       const def = choices[Math.floor(Math.random() * choices.length)]
       const isMobile = width < 640
-      const size = isMobile ? rand(140, 220) : rand(260, 460)
+      const size = isMobile ? rand(140, 220) : rand(150, 260)
       const radius = boundingRadius(def, size)
 
       let best = null
@@ -228,6 +299,7 @@ export default function BgTexture({ variant = "home" }) {
         radius,
         originXFrac: best.originX / width,
         originY: best.originY,
+        driftAngle: rand(0, Math.PI * 2),
         start: t,
         fadeIn: 2.6,
         hold: rand(5, 8),
@@ -245,25 +317,32 @@ export default function BgTexture({ variant = "home" }) {
       ctx.fillStyle = "#05050b"
       ctx.fillRect(0, 0, width, height)
 
-      const driftFrac = (t * DRIFT_PX_PER_SEC / width) % DRIFT_SPAN
+      const driftMag = (t * DRIFT_PX_PER_SEC / width) % DRIFT_SPAN
+
+      function driftPos(obj, speedMul) {
+        const dist = driftMag * speedMul
+        const x = ((obj.x + Math.cos(obj.driftAngle) * dist + 0.5) % DRIFT_SPAN + DRIFT_SPAN) % DRIFT_SPAN - 0.5
+        const y = ((obj.y + Math.sin(obj.driftAngle) * dist + 0.5) % DRIFT_SPAN + DRIFT_SPAN) % DRIFT_SPAN - 0.5
+        return { x, y }
+      }
 
       nebulas.forEach(n => {
-        let x = ((n.x + driftFrac * n.driftMul + 0.5) % DRIFT_SPAN) - 0.5
-        ctx.drawImage(n.sprite, x * width - n.w / 2, n.y * height - n.w / 2)
+        const p = driftPos(n, n.driftMul)
+        ctx.drawImage(n.sprite, p.x * width - n.w / 2, p.y * height - n.w / 2)
       })
 
       galaxies.forEach(g => {
-        let x = ((g.x + driftFrac * g.driftMul + 0.5) % DRIFT_SPAN) - 0.5
-        ctx.drawImage(g.sprite, x * width - g.w / 2, g.y * height - g.w / 2)
+        const p = driftPos(g, g.driftMul)
+        ctx.drawImage(g.sprite, p.x * width - g.w / 2, p.y * height - g.w / 2)
       })
 
       bgStars.forEach(s => {
         const tw = 0.5 + 0.5 * Math.sin(t * s.speed + s.phase)
         const alpha = s.base * (0.6 + 0.4 * tw)
-        let x = ((s.x + driftFrac + 0.5) % DRIFT_SPAN) - 0.5
+        const p = driftPos(s, s.driftMul)
         ctx.beginPath()
         ctx.fillStyle = `rgba(230,230,255,${alpha.toFixed(3)})`
-        ctx.arc(x * width, s.y * height, s.r, 0, Math.PI * 2)
+        ctx.arc(p.x * width, p.y * height, s.r, 0, Math.PI * 2)
         ctx.fill()
       })
 
@@ -271,9 +350,9 @@ export default function BgTexture({ variant = "home" }) {
       giantStars.forEach(s => {
         const tw = 0.5 + 0.5 * Math.sin(t * s.speed + s.phase)
         const alpha = s.base * (0.7 + 0.3 * tw)
-        let x = ((s.x + driftFrac + 0.5) % DRIFT_SPAN) - 0.5
-        x = x * width
-        const y = s.y * height
+        const p = driftPos(s, s.driftMul)
+        let x = p.x * width
+        const y = p.y * height
         const glowR = s.r * 5
         if (refreshGlow || !s._glow) {
           const glow = ctx.createRadialGradient(x, y, 0, x, y, glowR)
@@ -409,14 +488,16 @@ export default function BgTexture({ variant = "home" }) {
         else if (age < c.fadeIn + c.hold) alpha = 1
         else alpha = Math.max(0, 1 - (age - c.fadeIn - c.hold) / c.fadeOut)
 
-        const originX = c.originXFrac * width + (t - c.start) * DRIFT_PX_PER_SEC
+        const driftDist = (t - c.start) * DRIFT_PX_PER_SEC
+        const originX = c.originXFrac * width + Math.cos(c.driftAngle) * driftDist
+        const originY = c.originY + Math.sin(c.driftAngle) * driftDist
         const pts = c.def.stars.map(([nx, ny]) => [
           originX + (nx - 0.5) * c.size,
-          c.originY + (ny - 0.5) * c.size,
+          originY + (ny - 0.5) * c.size,
         ])
 
-        ctx.strokeStyle = `rgba(185,166,255,${(alpha * 0.5).toFixed(3)})`
-        ctx.lineWidth = 1
+        ctx.strokeStyle = `rgba(185,166,255,${(alpha * 0.32).toFixed(3)})`
+        ctx.lineWidth = 0.7
         c.def.lines.forEach(([a, b], i) => {
           const lineProgress = Math.min(1, Math.max(0, (age - c.fadeIn * (i / c.def.lines.length)) / (c.fadeIn * 0.6)))
           if (age >= c.fadeIn) {
@@ -430,23 +511,23 @@ export default function BgTexture({ variant = "home" }) {
             ctx.beginPath()
             ctx.moveTo(x1, y1)
             ctx.lineTo(x1 + (x2 - x1) * lineProgress, y1 + (y2 - y1) * lineProgress)
-            ctx.strokeStyle = `rgba(185,166,255,${(alpha * 0.5 * lineProgress).toFixed(3)})`
+            ctx.strokeStyle = `rgba(185,166,255,${(alpha * 0.32 * lineProgress).toFixed(3)})`
             ctx.stroke()
           }
         })
 
         pts.forEach(([x, y], i) => {
           const tw = 0.7 + 0.3 * Math.sin(t * 2.2 + i * 1.3)
-          const a = alpha * tw
-          const glow = ctx.createRadialGradient(x, y, 0, x, y, 9)
+          const a = alpha * tw * 0.65
+          const glow = ctx.createRadialGradient(x, y, 0, x, y, 6)
           glow.addColorStop(0, `rgba(255,255,255,${(a * 0.9).toFixed(3)})`)
           glow.addColorStop(1, "rgba(255,255,255,0)")
           ctx.fillStyle = glow
-          ctx.fillRect(x - 9, y - 9, 18, 18)
+          ctx.fillRect(x - 6, y - 6, 12, 12)
 
           ctx.beginPath()
           ctx.fillStyle = `rgba(255,255,255,${a.toFixed(3)})`
-          ctx.arc(x, y, 2.4, 0, Math.PI * 2)
+          ctx.arc(x, y, 1.5, 0, Math.PI * 2)
           ctx.fill()
         })
       })
