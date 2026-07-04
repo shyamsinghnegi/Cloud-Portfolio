@@ -26,13 +26,15 @@ function ProjectCard({ p, className = "" }) {
   return (
     <div
       className={`bento-card bento-${p.slot} ${className}`}
-      role="link"
-      tabIndex={0}
-      onClick={() => router.push(`/projects/${p.slug}`)}
-      onKeyDown={e => { if (e.key === "Enter") router.push(`/projects/${p.slug}`) }}
       onPointerMove={tilt.onPointerMove}
       onPointerLeave={tilt.onPointerLeave}
     >
+      <a
+        href={`/projects/${p.slug}`}
+        className="bento-card-link"
+        aria-label={`View ${p.name} project details`}
+        onClick={e => { e.preventDefault(); router.push(`/projects/${p.slug}`) }}
+      />
       <div className="bento-glow" aria-hidden="true" />
       <div className="bento-row">
         <span className={`proj-status${p.status === "wip" ? " wip" : ""}`}>
@@ -44,6 +46,7 @@ function ProjectCard({ p, className = "" }) {
           target="_blank"
           rel="noopener noreferrer"
           className="proj-gh-link"
+          aria-label={`View ${p.name} source on GitHub`}
           onClick={e => e.stopPropagation()}
         >
           <GhIcon />

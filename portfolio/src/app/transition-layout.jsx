@@ -9,7 +9,7 @@ import { HintCtx } from "./hint-context"
 
 const BgTexture = dynamic(() => import("./components/BgTexture"), { ssr: false })
 
-const PATHS = {
+export const PATHS = {
   home:     "/",
   about:    "/about",
   projects: "/projects",

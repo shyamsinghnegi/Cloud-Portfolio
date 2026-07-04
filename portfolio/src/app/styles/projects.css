@@ -138,7 +138,13 @@
 .bento-card:hover::after,
 .bento-card:focus-visible::after { opacity: 0.7; }
 
-.bento-card > *:not(.bento-glow) { position: relative; z-index: 2; }
+.bento-card > *:not(.bento-glow):not(.bento-card-link) { position: relative; z-index: 2; }
+
+.bento-card-link {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
 
 .bento-row {
   display: flex;
@@ -208,6 +214,8 @@
 .proj-status.wip .proj-status-dot { background: #5a5678; box-shadow: none; }
 
 .proj-gh-link {
+  position: relative;
+  z-index: 4;
   display: inline-flex;
   align-items: center;
   color: var(--text-muted);
@@ -218,6 +226,8 @@
 .proj-gh-link svg { width: 14px; height: 14px; fill: currentColor; }
 
 .bento-cta {
+  position: relative;
+  z-index: 4;
   display: inline-flex;
   align-items: center;
   gap: 6px;

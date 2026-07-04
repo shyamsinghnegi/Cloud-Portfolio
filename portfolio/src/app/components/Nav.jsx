@@ -1,4 +1,5 @@
 "use client"
+import { PATHS } from "../transition-layout"
 
 const SECTIONS = [
   { id: "about",    label: "About Me",        ix: "01" },
@@ -35,15 +36,16 @@ export default function Nav({ onNavigate, expanded = false, currentSection = "ho
         <ul className="nav-list">
           {SECTIONS.map((s) => (
             <li key={s.id}>
-              <button
+              <a
+                href={PATHS[s.id]}
                 className="nav-link"
-                onClick={() => onNavigate(s.id)}
+                onClick={(e) => { e.preventDefault(); onNavigate(s.id) }}
                 tabIndex={expanded ? 0 : -1}
               >
                 <span className="arr">→</span>
                 <span className="lbl">{s.label}</span>
                 <span className="ix">{s.ix}</span>
-              </button>
+              </a>
             </li>
           ))}
         </ul>
@@ -51,10 +53,12 @@ export default function Nav({ onNavigate, expanded = false, currentSection = "ho
 
       <nav className={`nav-collapsed${!expanded ? " show" : ""}`} aria-hidden={expanded}>
         {ALL_NAV.map((s) => (
-          <button
+          <a
             key={s.id}
+            href={PATHS[s.id]}
             className={`glass-icon ${currentSection === s.id ? "active" : ""}`}
             onClick={(e) => {
+              e.preventDefault()
               const btn = e.currentTarget
               const rect = btn.getBoundingClientRect()
               btn.style.setProperty("--wash-x", `${e.clientX - rect.left}px`)
@@ -70,7 +74,7 @@ export default function Nav({ onNavigate, expanded = false, currentSection = "ho
           >
             <span className="gi-wash" aria-hidden="true" />
             {s.icon}
-          </button>
+          </a>
         ))}
       </nav>
     </>
