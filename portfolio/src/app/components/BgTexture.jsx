@@ -7,6 +7,8 @@ const NUM_GIANT_STARS = 12
 const NUM_GALAXIES = 5
 const NUM_NEBULAS = 5
 const MAX_LIVE = 3
+const TARGET_FPS = 30
+const FRAME_INTERVAL = 1000 / TARGET_FPS
 
 function rand(min, max) { return min + Math.random() * (max - min) }
 
@@ -309,8 +311,13 @@ export default function BgTexture({ variant = "home" }) {
 
     const start = performance.now()
     let animating = false
+    let lastFrameTime = 0
 
     function draw(now) {
+      if (animating && !reduceMotion) raf = requestAnimationFrame(draw)
+      if (now - lastFrameTime < FRAME_INTERVAL) return
+      lastFrameTime = now
+
       frameCount++
       const t = (now - start) / 1000
       ctx.clearRect(0, 0, width, height)
@@ -346,7 +353,7 @@ export default function BgTexture({ variant = "home" }) {
         ctx.fill()
       })
 
-      const refreshGlow = frameCount % 3 === 0
+      const refreshGlow = frameCount % 6 === 0
       giantStars.forEach(s => {
         const tw = 0.5 + 0.5 * Math.sin(t * s.speed + s.phase)
         const alpha = s.base * (0.7 + 0.3 * tw)
@@ -531,8 +538,6 @@ export default function BgTexture({ variant = "home" }) {
           ctx.fill()
         })
       })
-
-      if (animating && !reduceMotion) raf = requestAnimationFrame(draw)
     }
 
     draw(performance.now()) // paint one static frame immediately, no blank flash

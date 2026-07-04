@@ -1,0 +1,13 @@
+{
+  "globalHeaders": {
+    "Cache-Control": "public, max-age=3600"
+  },
+  "routes": [
+    {
+      "route": "/_next/static/*",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
+    }
+  ]
+}

@@ -1,11 +1,13 @@
 "use client"
 import { useState, useCallback, useRef, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
+import dynamic from "next/dynamic"
 import Nav from "./components/Nav"
-import BgTexture from "./components/BgTexture"
 import NowPlaying from "./components/NowPlaying"
 import { NavCtx } from "./nav-context"
 import { HintCtx } from "./hint-context"
+
+const BgTexture = dynamic(() => import("./components/BgTexture"), { ssr: false })
 
 const PATHS = {
   home:     "/",
