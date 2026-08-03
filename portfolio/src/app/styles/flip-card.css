@@ -1,0 +1,218 @@
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.flip-scene {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1200px;
+  perspective: 1800px;
+}
+
+.flip-card {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.9s cubic-bezier(0.4, 0.1, 0.2, 1);
+}
+.flip-card.is-back { transform: rotateY(180deg); }
+@media (prefers-reduced-motion: reduce) {
+  .flip-card { transition: none; }
+}
+
+.flip-face {
+  backface-visibility: hidden;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  padding: clamp(20px, 2.2vw, 32px) clamp(20px, 2.8vw, 36px);
+  box-sizing: border-box;
+  height: min(85vh, 800px);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.flip-face--back {
+  transform: rotateY(180deg);
+}
+.flip-face--offstage {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.card-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.card-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: clamp(20px, 3vh, 32px);
+}
+
+.mark-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mark-row--back {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+.mark-back-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--accent-orange);
+  transition: color var(--duration-interaction) var(--ease-out-expo),
+              transform var(--duration-interaction) var(--ease-out-expo);
+}
+.mark-row--back:hover .mark-back-icon,
+.mark-row--back:focus-visible .mark-back-icon {
+  color: var(--ink-black);
+  transform: translateX(-2px);
+}
+.mark-row--back:focus-visible { outline: none; }
+
+.mark-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--warm-gray);
+  flex-shrink: 0;
+}
+.mark-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.mark-name {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ink-black);
+  text-transform: lowercase;
+}
+
+.corner-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  color: var(--text-faint);
+}
+
+.card-footer {
+  margin-top: auto;
+  padding-top: clamp(20px, 3vh, 28px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card-footer.split { justify-content: space-between; }
+.card-footer--end { justify-content: flex-end; }
+
+.location-text {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  color: var(--text-faint);
+}
+
+.flip-btn {
+  background: transparent;
+  border: 1px solid var(--warm-gray);
+  color: var(--ink-black);
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: border-color var(--duration-interaction) var(--ease-out-expo),
+              background var(--duration-interaction) var(--ease-out-expo);
+}
+.flip-btn:hover,
+.flip-btn:focus-visible {
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+  outline: none;
+}
+
+.flip-btn--specular {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.flip-btn--specular::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.28) 45%,
+    rgba(255, 255, 255, 0.28) 55%,
+    transparent 80%
+  );
+  transform: translateX(-140%);
+  transition: transform 0.7s var(--ease-out-expo);
+  pointer-events: none;
+  z-index: 1;
+}
+.flip-btn--specular:hover::before,
+.flip-btn--specular:focus-visible::before {
+  transform: translateX(140%);
+}
+.flip-btn--specular:hover,
+.flip-btn--specular:focus-visible {
+  border-color: var(--warm-gray);
+  color: var(--ink-black);
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+  color: var(--text-faint);
+  margin-bottom: 28px;
+}
+
+@media (max-width: 720px) {
+  .flip-face { height: 93vh; padding: 20px; }
+  .card-header { margin-bottom: 20px; }
+
+  .mobile-flip-row .flip-btn--specular {
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
+  }
+}
