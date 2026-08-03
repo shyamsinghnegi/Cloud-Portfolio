@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" fill="none">
+  <defs>
+    <clipPath id="cbClip"><circle cx="128" cy="128" r="102"/></clipPath>
+  </defs>
+
+  <!-- background grid texture -->
+  <g clip-path="url(#cbClip)" stroke="#a8a6a0" stroke-width="1" opacity="0.2">
+    <path d="M20 48H236M20 80H236M20 112H236M20 144H236M20 176H236M20 208H236"/>
+    <path d="M48 20V236M80 20V236M112 20V236M144 20V236M176 20V236M208 20V236"/>
+  </g>
+  <!-- circuit nodes -->
+  <g clip-path="url(#cbClip)" opacity="0.5" stroke="#a8a6a0" stroke-width="1.2" fill="#f2f1ee" stroke-linecap="round">
+    <circle cx="48" cy="80" r="3"/><path d="M48 80 H80 V48"/>
+    <circle cx="208" cy="176" r="3"/><path d="M208 176 H176 V208"/>
+    <circle cx="80" cy="208" r="2.5"/>
+    <circle cx="176" cy="48" r="2.5"/>
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <!-- angle brackets, varied weight -->
+    <path d="M108 78 L62 128 L108 178" stroke="#a8a6a0" stroke-width="6"/>
+    <path d="M108 96 L79 128 L108 160" stroke="#a8a6a0" stroke-width="1.4" opacity="0.55"/>
+    <path d="M148 78 L194 128 L148 178" stroke="#a8a6a0" stroke-width="6"/>
+    <path d="M148 96 L177 128 L148 160" stroke="#a8a6a0" stroke-width="1.4" opacity="0.55"/>
+    <!-- diagonal slash -->
+    <path d="M116 186 L140 70" stroke="#cf8b5c" stroke-width="3.6"/>
+  </g>
+</svg>

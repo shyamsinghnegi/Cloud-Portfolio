@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" fill="none">
+  <g stroke-linecap="round" fill="none">
+    <!-- back wave -->
+    <path d="M30 122 C63 152 93 152 128 122 C163 92 193 92 226 122" stroke="#a8a6a0" stroke-width="1.4" opacity="0.4"/>
+    <!-- mid wave -->
+    <path d="M30 160 C63 138 93 138 128 160 C163 182 193 182 226 160" stroke="#a8a6a0" stroke-width="1.8" opacity="0.65"/>
+    <!-- front wave, carries the data points -->
+    <path d="M30 94 C63 64 93 64 128 94 C163 124 193 124 226 94" stroke="#a8a6a0" stroke-width="2.6"/>
+  </g>
+
+  <!-- data markers along the front wave -->
+  <g stroke="#a8a6a0" stroke-width="1.4">
+    <circle cx="30" cy="94" r="3.4" fill="#f2f1ee"/>
+    <circle cx="79" cy="72.5" r="3.4" fill="#f2f1ee"/>
+    <circle cx="128" cy="94" r="3.4" fill="#f2f1ee"/>
+    <circle cx="177" cy="115.5" r="4.2" fill="#cf8b5c" stroke="#cf8b5c"/>
+    <circle cx="226" cy="94" r="3.4" fill="#f2f1ee"/>
+  </g>
+  <path d="M177 115.5 V160" stroke="#cf8b5c" stroke-width="1" stroke-dasharray="2 5" opacity="0.55"/>
+</svg>

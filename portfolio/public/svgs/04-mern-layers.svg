@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" fill="none">
+  <g stroke-linejoin="round">
+    <!-- connecting structure lines -->
+    <g stroke="#a8a6a0" stroke-width="1" opacity="0.45">
+      <path d="M50 190 L58 152 L66 114 L74 76"/>
+      <path d="M206 190 L198 152 L190 114 L182 76"/>
+      <path d="M128 76 V190" stroke-dasharray="3 6"/>
+    </g>
+
+    <!-- layer 4 (bottom, widest) -->
+    <path d="M50 190 L128 190 L206 190 L206 197 L128 230 L50 197 Z" fill="#f2f1ee" stroke="#a8a6a0" stroke-width="1.5" opacity="0.75"/>
+    <path d="M50 190 L128 157 L206 190 L128 223 Z" fill="#f2f1ee" stroke="#a8a6a0" stroke-width="1.7"/>
+
+    <!-- layer 3 -->
+    <path d="M58 152 L128 152 L198 152 L198 159 L128 189 L58 159 Z" fill="#f2f1ee" stroke="#a8a6a0" stroke-width="1.5" opacity="0.75"/>
+    <path d="M58 152 L128 122 L198 152 L128 182 Z" fill="#f2f1ee" stroke="#a8a6a0" stroke-width="1.7"/>
+
+    <!-- layer 2 -->
+    <path d="M66 114 L128 114 L190 114 L190 121 L128 147 L66 121 Z" fill="#f2f1ee" stroke="#a8a6a0" stroke-width="1.5" opacity="0.75"/>
+    <path d="M66 114 L128 88 L190 114 L128 140 Z" fill="#f2f1ee" stroke="#a8a6a0" stroke-width="1.7"/>
+
+    <!-- layer 1 (top, amber accent) -->
+    <path d="M74 76 L128 76 L182 76 L182 83 L128 106 L74 83 Z" fill="#f2f1ee" stroke="#cf8b5c" stroke-width="1.5" opacity="0.8"/>
+    <path d="M74 76 L128 53 L182 76 L128 99 Z" fill="#f2f1ee" stroke="#cf8b5c" stroke-width="1.8"/>
+
+    <!-- fine surface detail on top plate -->
+    <path d="M101 76 L128 64 L155 76 L128 88 Z" stroke="#a8a6a0" stroke-width="0.9" opacity="0.5" fill="none"/>
+  </g>
+</svg>

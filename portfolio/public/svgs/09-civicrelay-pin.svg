@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" fill="none">
+  <!-- ground ripples -->
+  <g stroke="#a8a6a0" fill="none">
+    <ellipse cx="128" cy="188" rx="78" ry="26" stroke-width="1.1" opacity="0.22"/>
+    <ellipse cx="128" cy="188" rx="55" ry="18" stroke-width="1.2" opacity="0.38"/>
+    <ellipse cx="128" cy="188" rx="32" ry="11" stroke-width="1.4" opacity="0.6"/>
+  </g>
+
+  <g stroke-linejoin="round" stroke-linecap="round">
+    <!-- pin body -->
+    <path d="M128 184 C112 158 94 132 94 112 A34 34 0 1 1 162 112 C162 132 144 158 128 184 Z"
+          fill="#f2f1ee" stroke="#a8a6a0" stroke-width="2"/>
+    <!-- inner offset outline for layered depth -->
+    <path d="M128 170 C116 150 102 130 102 112 A26 26 0 1 1 154 112 C154 130 140 150 128 170 Z"
+          stroke="#a8a6a0" stroke-width="0.9" opacity="0.4" fill="none"/>
+    <!-- core -->
+    <circle cx="128" cy="112" r="12" stroke="#cf8b5c" stroke-width="2.2" fill="none"/>
+    <circle cx="128" cy="112" r="3" fill="#cf8b5c"/>
+    <!-- base contact -->
+    <path d="M128 184 V190" stroke="#a8a6a0" stroke-width="1.6"/>
+  </g>
+</svg>
