@@ -1,14 +1,8 @@
-import { Playfair_Display, DM_Sans, JetBrains_Mono } from "next/font/google"
+import { Inter, JetBrains_Mono } from "next/font/google"
 import "./styles/globals.css"
-import TransitionLayout from "./transition-layout"
+import AppShell from "./app-shell"
 
-const dmSerif = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  variable: "--font-display",
-})
-
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-body",
@@ -27,8 +21,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${dmSerif.variable} ${dmSans.variable} ${jetbrains.variable}`}>
-      <body><TransitionLayout>{children}</TransitionLayout></body>
+    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
+      <body><AppShell>{children}</AppShell></body>
     </html>
   )
 }
