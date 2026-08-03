@@ -2,7 +2,8 @@
 import { useEffect, useRef, useState } from "react"
 import Lottie from "lottie-react"
 
-const REPLAY_DELAY_MS = 2000
+const REPLAY_DELAY_MS = 3500
+const PLAY_SPEED = 1.6
 
 export default function LottieIcon({ src, className = "", size = 20 }) {
   const [data, setData] = useState(null)
@@ -19,7 +20,7 @@ export default function LottieIcon({ src, className = "", size = 20 }) {
 
   useEffect(() => () => clearTimeout(timeoutRef.current), [])
 
-  if (!data) return <span className={className} aria-hidden="true" />
+  if (!data) return <span className={className} style={{ width: size, height: size, display: "inline-block" }} aria-hidden="true" />
 
   return (
     <Lottie
@@ -27,6 +28,7 @@ export default function LottieIcon({ src, className = "", size = 20 }) {
       animationData={data}
       loop={false}
       autoplay
+      speed={PLAY_SPEED}
       className={className}
       style={{ width: size, height: size }}
       onComplete={() => {

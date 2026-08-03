@@ -62,7 +62,7 @@
 }
 @keyframes nowPlayingBorderShine {
   0%, 100% { border-color: var(--warm-gray); box-shadow: none; }
-  50%      { border-color: var(--accent-orange); box-shadow: 0 0 12px rgba(236, 143, 194, 0.55); }
+  50%      { border-color: var(--accent-orange); box-shadow: 0 0 12px rgba(207, 139, 92, 0.55); }
 }
 @media (prefers-reduced-motion: reduce) {
   .now-playing-min.shine { animation: none; }

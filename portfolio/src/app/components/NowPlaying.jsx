@@ -1,7 +1,5 @@
 "use client"
-import { useContext, useEffect, useRef, useState } from "react"
-import { usePathname } from "next/navigation"
-import { HintCtx } from "../hint-context"
+import { useEffect, useRef, useState } from "react"
 import "../styles/now-playing.css"
 
 const EXIT_MS = 320
@@ -19,8 +17,6 @@ function sameTrack(a, b) {
 }
 
 export default function NowPlaying() {
-  const { hintActive } = useContext(HintCtx)
-  const pathname = usePathname()
   const [data, setData] = useState(null)
   const [mounted, setMounted] = useState(false)
   const [show, setShow] = useState(false)
@@ -32,8 +28,6 @@ export default function NowPlaying() {
   const collapseTimeoutRef = useRef(null)
   const shineTimeoutRef = useRef(null)
   const morphTimeoutRef = useRef(null)
-  const pathnameRef = useRef(pathname)
-  pathnameRef.current = pathname
 
   function setMinimizedMorph(next) {
     if (!isMobile) { setMinimized(next); return }
@@ -124,16 +118,14 @@ export default function NowPlaying() {
     setMinimized(false)
     collapseTimeoutRef.current = setTimeout(() => {
       setMinimizedMorph(true)
-      if (pathnameRef.current === "/") {
-        setJustCollapsed(true)
-        clearTimeout(shineTimeoutRef.current)
-        shineTimeoutRef.current = setTimeout(() => setJustCollapsed(false), 1800)
-      }
+      setJustCollapsed(true)
+      clearTimeout(shineTimeoutRef.current)
+      shineTimeoutRef.current = setTimeout(() => setJustCollapsed(false), 1800)
     }, AUTO_COLLAPSE_MS)
     return () => clearTimeout(collapseTimeoutRef.current)
   }, [data?.isPlaying, data?.title, data?.artist])
 
-  if (!mounted || hintActive) return null
+  if (!mounted) return null
 
   function renderDisc(morphClass) {
     return (

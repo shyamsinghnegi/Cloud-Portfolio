@@ -1,15 +1,21 @@
 "use client"
 import { useEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 
 const AUTOPLAY_MS = 3500
 const DRAG_THRESHOLD = 80
 
-export default function ScreenshotStack({ screenshots }) {
+export default function ScreenshotStack({ screenshots, layout = "desktop" }) {
   const [order, setOrder] = useState(() => screenshots.map((_, i) => i))
   const [dragX, setDragX] = useState(0)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const dragging = useRef(false)
+  const wasDrag = useRef(false)
   const startX = useRef(0)
   const timerRef = useRef(null)
+
+  useEffect(() => setMounted(true), [])
 
   function cycle(dir = 1) {
     setOrder(o => {
@@ -33,12 +39,15 @@ export default function ScreenshotStack({ screenshots }) {
 
   function onPointerDown(e) {
     dragging.current = true
+    wasDrag.current = false
     startX.current = e.clientX
     e.currentTarget.setPointerCapture?.(e.pointerId)
   }
   function onPointerMove(e) {
     if (!dragging.current) return
-    setDragX(e.clientX - startX.current)
+    const dx = e.clientX - startX.current
+    if (Math.abs(dx) > 6) wasDrag.current = true
+    setDragX(dx)
   }
   function onPointerUp() {
     if (!dragging.current) return
@@ -48,12 +57,30 @@ export default function ScreenshotStack({ screenshots }) {
     setDragX(0)
     resetAutoplay()
   }
+  function onCardClick() {
+    if (wasDrag.current) return
+    setLightboxOpen(true)
+  }
+
+  useEffect(() => {
+    if (!lightboxOpen) return
+    function onKey(e) {
+      if (e.key === "Escape") setLightboxOpen(false)
+      if (e.key === "ArrowLeft") { cycle(-1); resetAutoplay() }
+      if (e.key === "ArrowRight") { cycle(1); resetAutoplay() }
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lightboxOpen])
 
   if (!screenshots || screenshots.length === 0) return null
 
+  const current = screenshots[order[0]]
+
   return (
     <div className="shot-stack">
-      <div className="shot-stack-deck">
+      <div className={`shot-stack-deck shot-stack-deck--${layout}`}>
         {order.map((idx, pos) => {
           const s = screenshots[idx]
           const isTop = pos === 0
@@ -73,6 +100,7 @@ export default function ScreenshotStack({ screenshots }) {
               onPointerMove={isTop ? onPointerMove : undefined}
               onPointerUp={isTop ? onPointerUp : undefined}
               onPointerLeave={isTop ? onPointerUp : undefined}
+              onClick={isTop ? onCardClick : undefined}
             >
               {s.src ? (
                 <img src={s.src} alt={s.alt || ""} draggable={false} />
@@ -110,6 +138,50 @@ export default function ScreenshotStack({ screenshots }) {
             ›
           </button>
         </div>
+      )}
+
+      {mounted && lightboxOpen && current.src && createPortal(
+        <div className="shot-lightbox" onClick={() => setLightboxOpen(false)}>
+          <button
+            type="button"
+            className="shot-lightbox-close"
+            aria-label="Close"
+            onClick={() => setLightboxOpen(false)}
+          >
+            ×
+          </button>
+
+          {screenshots.length > 1 && (
+            <button
+              type="button"
+              className="shot-lightbox-nav shot-lightbox-prev"
+              aria-label="Previous screenshot"
+              onClick={(e) => { e.stopPropagation(); cycle(-1); resetAutoplay() }}
+            >
+              ‹
+            </button>
+          )}
+
+          <img
+            src={current.src}
+            alt={current.alt || ""}
+            className={`shot-lightbox-img shot-lightbox-img--${layout}`}
+            onClick={(e) => e.stopPropagation()}
+            draggable={false}
+          />
+
+          {screenshots.length > 1 && (
+            <button
+              type="button"
+              className="shot-lightbox-nav shot-lightbox-next"
+              aria-label="Next screenshot"
+              onClick={(e) => { e.stopPropagation(); cycle(1); resetAutoplay() }}
+            >
+              ›
+            </button>
+          )}
+        </div>,
+        document.body
       )}
     </div>
   )
