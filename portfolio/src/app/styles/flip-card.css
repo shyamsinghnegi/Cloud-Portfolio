@@ -40,7 +40,7 @@
   border-radius: 10px;
   padding: clamp(20px, 2.2vw, 32px) clamp(20px, 2.8vw, 36px);
   box-sizing: border-box;
-  height: min(85vh, 800px);
+  min-height: min(85vh, 800px);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -56,20 +56,15 @@
 }
 
 .card-scroll {
+  display: flex;
+  flex-direction: column;
   flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.card-scroll::-webkit-scrollbar {
-  display: none;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   margin-bottom: clamp(20px, 3vh, 32px);
 }
 
@@ -208,7 +203,7 @@
 }
 
 @media (max-width: 720px) {
-  .flip-face { height: 93vh; padding: 20px; }
+  .flip-face { min-height: 93vh; padding: 20px; }
   .card-header { margin-bottom: 20px; }
 
   .mobile-flip-row .flip-btn--specular {

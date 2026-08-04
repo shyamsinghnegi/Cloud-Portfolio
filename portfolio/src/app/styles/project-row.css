@@ -438,7 +438,11 @@
     width: 100%;
     margin-left: 0;
   }
-  .tracklist--bleed .tracklist-row { padding-left: 0; padding-right: 0; }
+  .workshop-list-col .tracklist--bleed .tracklist-row,
+  .tracklist--bleed .tracklist-row {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
   .tracklist-row { align-items: flex-start; gap: 10px; padding-top: 20px; padding-bottom: 20px; }
   .tracklist-index { margin-top: 2px; }
   .tracklist-name { white-space: normal; line-height: 1.35; }

@@ -32,16 +32,14 @@ export default function FlipCard() {
         <div
           className={`flip-face${settledSide === "back" ? " flip-face--offstage" : ""}`}
           ref={frontRef}
-          aria-hidden={side !== "front"}
         >
-          <CardFront onFlip={() => setSide("back")} />
+          <CardFront onFlip={() => { document.activeElement?.blur(); setSide("back") }} />
         </div>
         <div
           className={`flip-face flip-face--back${settledSide === "front" ? " flip-face--offstage" : ""}`}
           ref={backRef}
-          aria-hidden={side !== "back"}
         >
-          <CardBack onFlip={() => setSide("front")} />
+          <CardBack onFlip={() => { document.activeElement?.blur(); setSide("front") }} />
         </div>
       </div>
     </div>

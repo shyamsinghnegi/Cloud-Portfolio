@@ -14,6 +14,8 @@ const BIO_PARAGRAPHS = [
   "Cloud & DevOps engineer based in India. I build the infrastructure that keeps things running — serverless functions, CI/CD pipelines, static deployments — and then go further to wire up the full product.",
 
   "I enjoy working on projects where software has to move beyond a prototype and perform reliably in real-world conditions. For me, the most interesting part is understanding the constraints, solving the engineering problems, and turning an idea into something that actually works.",
+
+  "Outside of client work, I spend time picking apart how systems fail — reading postmortems, rebuilding small pieces of infrastructure from scratch to understand them properly, and keeping up with tools before I actually need them on a project.",
 ]
 
 const EDUCATION = [
