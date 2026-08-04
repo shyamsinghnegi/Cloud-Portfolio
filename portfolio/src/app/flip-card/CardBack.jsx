@@ -29,14 +29,14 @@ export default function CardBack({ onFlip }) {
           >
             <span className="mark-back-icon">‹</span>
             <span className="mark-avatar">
-              <img src="/dither.png" alt="" />
+              <img src="/avatar.svg" alt="" />
             </span>
             <span className="mark-name">shyam</span>
           </button>
         ) : (
           <span className="mark-row">
             <span className="mark-avatar">
-              <img src="/dither.png" alt="" />
+              <img src="/avatar.svg" alt="" />
             </span>
             <span className="mark-name">shyam</span>
           </span>

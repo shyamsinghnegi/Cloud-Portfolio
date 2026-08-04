@@ -150,7 +150,7 @@ export default function CardFront({ onFlip }) {
       <div className="card-header">
         <div className="mark-row">
           <span className="mark-avatar">
-            <img src="/dither.png" alt="" />
+            <img src="/avatar.svg" alt="" />
           </span>
           <span className="mark-name">shyam</span>
         </div>
