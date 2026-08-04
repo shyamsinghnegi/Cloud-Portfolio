@@ -6,10 +6,10 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  max-width: min(280px, calc(100vw - 32px));
-  padding: 8px 14px;
+  width: min(300px, calc(100vw - 32px));
+  padding: 10px 14px;
   border: 1px solid var(--warm-gray);
-  border-radius: 999px;
+  border-radius: 12px;
   background: var(--panel);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -25,6 +25,9 @@
 .now-playing.show {
   opacity: 1;
   transform: translateY(0) scale(1);
+}
+.now-playing.show.faded {
+  opacity: 0.35;
 }
 .now-playing:hover,
 .now-playing:focus-visible {
@@ -42,6 +45,16 @@
   padding: 8px 14px;
   cursor: pointer;
   font: inherit;
+  opacity: 0.55;
+  transition: opacity var(--duration-interaction) var(--ease-out-expo),
+              border-color 0.2s var(--ease-out-expo);
+}
+.now-playing-min.show {
+  opacity: 0.55;
+}
+.now-playing-min:hover,
+.now-playing-min:focus-visible {
+  opacity: 1;
 }
 .now-playing-min-label {
   font-family: var(--font-mono);
@@ -73,8 +86,31 @@
   align-items: center;
   gap: 10px;
   min-width: 0;
+  flex: 1;
   color: var(--ink-black);
   text-decoration: none;
+}
+
+.now-playing-close {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--duration-interaction) var(--ease-out-expo);
+}
+.now-playing-close:hover,
+.now-playing-close:focus-visible {
+  color: var(--ink-black);
+  outline: none;
 }
 
 .now-playing-disc {
@@ -97,12 +133,13 @@
               border-color 0.2s var(--ease-out-expo);
 }
 .now-playing-disc.show {
-  opacity: 1;
+  opacity: 0.55;
   transform: translateY(0) scale(1);
 }
 .now-playing-disc:hover,
 .now-playing-disc:focus-visible {
   border-color: var(--accent-blue);
+  opacity: 1;
   outline: none;
 }
 
@@ -237,7 +274,8 @@
 
 @media (max-width: 920px) {
   .now-playing {
-    max-width: min(220px, calc(100vw - 24px));
+    width: min(220px, calc(100vw - 24px));
+    border-radius: 10px;
     gap: 7px;
     padding: 6px 10px 6px 6px;
   }

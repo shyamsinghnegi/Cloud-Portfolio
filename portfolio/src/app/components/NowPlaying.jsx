@@ -24,10 +24,12 @@ export default function NowPlaying() {
   const [morphing, setMorphing] = useState(null)
   const [justCollapsed, setJustCollapsed] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [faded, setFaded] = useState(false)
   const exitTimeoutRef = useRef(null)
   const collapseTimeoutRef = useRef(null)
   const shineTimeoutRef = useRef(null)
   const morphTimeoutRef = useRef(null)
+  const widgetRef = useRef(null)
 
   function setMinimizedMorph(next) {
     if (!isMobile) { setMinimized(next); return }
@@ -37,6 +39,18 @@ export default function NowPlaying() {
       setMinimized(next)
       setMorphing(null)
     }, MORPH_MS)
+  }
+
+  function expandAndScheduleCollapse() {
+    setMinimizedMorph(false)
+    setFaded(false)
+    clearTimeout(collapseTimeoutRef.current)
+    collapseTimeoutRef.current = setTimeout(() => {
+      setMinimizedMorph(true)
+      setJustCollapsed(true)
+      clearTimeout(shineTimeoutRef.current)
+      shineTimeoutRef.current = setTimeout(() => setJustCollapsed(false), 1800)
+    }, AUTO_COLLAPSE_MS)
   }
 
   useEffect(() => {
@@ -116,6 +130,7 @@ export default function NowPlaying() {
     clearTimeout(morphTimeoutRef.current)
     setMorphing(null)
     setMinimized(false)
+    setFaded(false)
     collapseTimeoutRef.current = setTimeout(() => {
       setMinimizedMorph(true)
       setJustCollapsed(true)
@@ -125,6 +140,28 @@ export default function NowPlaying() {
     return () => clearTimeout(collapseTimeoutRef.current)
   }, [data?.isPlaying, data?.title, data?.artist])
 
+  // dim the expanded widget on scroll/click elsewhere, so it doesn't stay
+  // fully opaque and distracting while the user is reading/interacting with the page
+  useEffect(() => {
+    if (minimized) return
+
+    function handleScroll() {
+      setFaded(true)
+    }
+
+    function handlePointerDown(e) {
+      if (widgetRef.current?.contains(e.target)) return
+      setFaded(true)
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    document.addEventListener("pointerdown", handlePointerDown)
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      document.removeEventListener("pointerdown", handlePointerDown)
+    }
+  }, [minimized])
+
   if (!mounted) return null
 
   function renderDisc(morphClass) {
@@ -133,7 +170,7 @@ export default function NowPlaying() {
         key="disc"
         type="button"
         className={`now-playing-disc${show ? " show" : ""}${morphClass}`}
-        onClick={() => setMinimizedMorph(false)}
+        onClick={expandAndScheduleCollapse}
         aria-label={`Show now playing: ${data.title} by ${data.artist}`}
       >
         <span className="now-playing-disc-spin">
@@ -151,7 +188,7 @@ export default function NowPlaying() {
         key="min-pill"
         type="button"
         className={`now-playing now-playing-min${show ? " show" : ""}${justCollapsed ? " shine" : ""}`}
-        onClick={() => setMinimizedMorph(false)}
+        onClick={expandAndScheduleCollapse}
         aria-label={`Show now playing: ${data.title} by ${data.artist}`}
       >
         <span className="now-playing-bars" aria-hidden="true">
@@ -164,13 +201,24 @@ export default function NowPlaying() {
 
   function renderFullPill(morphClass) {
     return (
-      <div key="full-pill" className={`now-playing${show ? " show" : ""}${morphClass}`}>
+      <div
+        key="full-pill"
+        ref={widgetRef}
+        className={`now-playing${show ? " show" : ""}${faded ? " faded" : ""}${morphClass}`}
+        onPointerEnter={() => setFaded(false)}
+      >
         <a
           href={data.songUrl || undefined}
           target="_blank"
           rel="noopener noreferrer"
           className="now-playing-link"
           aria-label={`Shyam is listening to ${data.title} by ${data.artist}`}
+          onClick={(e) => {
+            if (faded) {
+              e.preventDefault()
+              setFaded(false)
+            }
+          }}
         >
           <span className="now-playing-art">
             {data.albumImageUrl && <img src={data.albumImageUrl} alt="" draggable={false} />}
@@ -186,6 +234,18 @@ export default function NowPlaying() {
             <span className="now-playing-artist" key={`artist-${data.title}-${data.artist}`}>{data.artist}</span>
           </span>
         </a>
+        <button
+          type="button"
+          className="now-playing-close"
+          onClick={(e) => {
+            e.preventDefault()
+            clearTimeout(collapseTimeoutRef.current)
+            setMinimizedMorph(true)
+          }}
+          aria-label="Minimize now playing"
+        >
+          ×
+        </button>
       </div>
     )
   }
