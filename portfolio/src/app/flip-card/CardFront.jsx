@@ -7,6 +7,7 @@ import CertList from "./CertList"
 import CertDetail from "./CertDetail"
 import CertCover from "./CertCover"
 import CertThumbnail from "./CertThumbnail"
+import useBackGuard from "../components/useBackGuard"
 import "../styles/cert-list.css"
 import "../styles/project-row.css"
 
@@ -130,6 +131,8 @@ export default function CardFront({ onFlip }) {
     certSectionRef.current?.scrollIntoView({ block: "nearest" })
   }
 
+  useBackGuard(activeCertIdx !== null, () => { setActiveCertIdx(null); scrollCertIntoView() })
+
   const certSection = (
     <div ref={certSectionRef}>
       <CertSection
@@ -137,7 +140,7 @@ export default function CardFront({ onFlip }) {
         sleeveCert={sleeveCert}
         onSelect={(i) => { setActiveCertIdx(i); scrollCertIntoView() }}
         onHover={setHoverCertIdx}
-        onBack={() => { setActiveCertIdx(null); scrollCertIntoView() }}
+        onBack={() => window.history.back()}
       />
     </div>
   )

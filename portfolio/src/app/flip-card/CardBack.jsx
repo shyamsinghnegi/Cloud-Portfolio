@@ -4,6 +4,7 @@ import { PROJECTS } from "../projects/data"
 import ProjectList from "./ProjectList"
 import ProjectDetail from "./ProjectDetail"
 import ProjectCover from "./ProjectCover"
+import useBackGuard from "../components/useBackGuard"
 import "../styles/cert-list.css"
 import "../styles/project-row.css"
 
@@ -14,6 +15,8 @@ export default function CardBack({ onFlip }) {
   const activeIndex = PROJECTS.findIndex((p) => p.slug === activeSlug)
   const sleeveProject = PROJECTS.find((p) => p.slug === hoverSlug) || PROJECTS[0]
 
+  useBackGuard(!!activeProject, () => setActiveSlug(null))
+
   return (
     <>
       <div className="card-header">
@@ -21,7 +24,7 @@ export default function CardBack({ onFlip }) {
           <button
             type="button"
             className="mark-row mark-row--back"
-            onClick={() => setActiveSlug(null)}
+            onClick={() => window.history.back()}
             aria-label="back to projects"
           >
             <span className="mark-back-icon">‹</span>
