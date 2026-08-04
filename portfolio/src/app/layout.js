@@ -31,12 +31,21 @@ export const metadata = {
     url: SITE_URL,
     siteName: "Shyam Singh Negi",
     type: "website",
+    images: [
+      {
+        url: "/bb.png",
+        width: 850,
+        height: 255,
+        type: "image/webp",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Shyam Singh Negi — Cloud Engineer & Full Stack Developer",
     description:
       "Portfolio of Shyam Singh Negi, a Cloud Engineer and Full Stack Developer specializing in DevOps, serverless infrastructure, and Next.js applications.",
+    images: ["/bb.png"],
   },
 }
 
