@@ -6,7 +6,7 @@ export default function AppShell({ children }) {
   return (
     <div className="app-shell">
       <Grain />
-      {children}
+      <main>{children}</main>
       <NowPlaying />
     </div>
   )
