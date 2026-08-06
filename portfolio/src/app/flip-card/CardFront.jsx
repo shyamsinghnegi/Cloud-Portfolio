@@ -11,12 +11,14 @@ import useBackGuard from "../components/useBackGuard"
 import "../styles/cert-list.css"
 import "../styles/project-row.css"
 
+const HEADLINE = "Full stack developer. I build and ship products end to end, from Next.js frontends to serverless infrastructure."
+
 const BIO_PARAGRAPHS = [
-  "Cloud & DevOps engineer based in India. I build the infrastructure that keeps things running — serverless functions, CI/CD pipelines, static deployments — and then go further to wire up the full product.",
+  "Based in Delhi, India. Cloud stays in the toolkit as a differentiator — not the identity — while the day-to-day is writing the frontend, the API, and the infrastructure it all runs on.",
 
   "I enjoy working on projects where software has to move beyond a prototype and perform reliably in real-world conditions. For me, the most interesting part is understanding the constraints, solving the engineering problems, and turning an idea into something that actually works.",
 
-  "Outside of client work, I spend time picking apart how systems fail — reading postmortems, rebuilding small pieces of infrastructure from scratch to understand them properly, and keeping up with tools before I actually need them on a project.",
+  "I spend time picking apart how systems fail — reading postmortems, rebuilding small pieces of infrastructure from scratch to understand them properly, and keeping up with tools before I actually need them on a project.",
 ]
 
 const EDUCATION = [
@@ -161,6 +163,7 @@ export default function CardFront({ onFlip }) {
         {/* Desktop layout: bio+certs column beside stack/education/languages sidebar */}
         <div className="bio-row front-desktop-only">
           <div className="bio-col">
+            <p className="bio-headline">{HEADLINE}</p>
             <BioParagraphs />
             {certSection}
           </div>
@@ -176,6 +179,7 @@ export default function CardFront({ onFlip }) {
         {/* Mobile layout: paragraphs -> stack/education/languages -> projects button -> certs -> footer */}
         <div className="front-mobile-only">
           <div className="bio-col">
+            <p className="bio-headline">{HEADLINE}</p>
             <div><BioParagraphs /></div>
           </div>
 

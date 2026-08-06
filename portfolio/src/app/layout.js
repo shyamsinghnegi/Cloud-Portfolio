@@ -1,4 +1,4 @@
-import { Inter, JetBrains_Mono } from "next/font/google"
+import { Inter, JetBrains_Mono, Fraunces } from "next/font/google"
 import "./styles/globals.css"
 import AppShell from "./app-shell"
 
@@ -14,20 +14,27 @@ const jetbrains = JetBrains_Mono({
   variable: "--font-mono",
 })
 
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["500"],
+  style: ["italic"],
+  variable: "--font-headline",
+})
+
 const SITE_URL = "https://shyamsingh-negi.in"
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Shyam Singh Negi — Cloud Engineer & Full Stack Developer",
+  title: "Shyam Singh Negi — Full Stack Developer",
   description:
-    "Portfolio of Shyam Singh Negi, a Cloud Engineer and Full Stack Developer specializing in DevOps, serverless infrastructure, and Next.js applications.",
+    "Portfolio of Shyam Singh Negi, a Full Stack Developer building Next.js applications on serverless infrastructure.",
   alternates: {
     canonical: SITE_URL,
   },
   openGraph: {
-    title: "Shyam Singh Negi — Cloud Engineer & Full Stack Developer",
+    title: "Shyam Singh Negi — Full Stack Developer",
     description:
-      "Portfolio of Shyam Singh Negi, a Cloud Engineer and Full Stack Developer specializing in DevOps, serverless infrastructure, and Next.js applications.",
+      "Portfolio of Shyam Singh Negi, a Full Stack Developer building Next.js applications on serverless infrastructure.",
     url: SITE_URL,
     siteName: "Shyam Singh Negi",
     type: "website",
@@ -42,9 +49,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shyam Singh Negi — Cloud Engineer & Full Stack Developer",
+    title: "Shyam Singh Negi — Full Stack Developer",
     description:
-      "Portfolio of Shyam Singh Negi, a Cloud Engineer and Full Stack Developer specializing in DevOps, serverless infrastructure, and Next.js applications.",
+      "Portfolio of Shyam Singh Negi, a Full Stack Developer building Next.js applications on serverless infrastructure.",
     images: ["/bb.png"],
   },
 }
@@ -53,7 +60,7 @@ const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "Shyam Singh Negi",
-  jobTitle: "Cloud Engineer & Full Stack Developer",
+  jobTitle: "Full Stack Developer",
   url: SITE_URL,
   sameAs: [
     "https://github.com/shyamsinghnegi",
@@ -63,7 +70,7 @@ const personJsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${inter.variable} ${jetbrains.variable} ${fraunces.variable}`}>
       <body>
         <script
           type="application/ld+json"

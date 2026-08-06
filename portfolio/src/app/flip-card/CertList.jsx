@@ -10,7 +10,7 @@ export default function CertList({ certs, onSelect, onHover }) {
             onMouseEnter={() => onHover?.(i)}
           >
             <span className="tracklist-name">{c.title}</span>
-            <span className="tracklist-tag">{c.tag.toLowerCase()} · {c.year}</span>
+            <span className="tracklist-tag">{c.tag.toLowerCase()}</span>
           </button>
         </li>
       ))}
