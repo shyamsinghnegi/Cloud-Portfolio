@@ -14,7 +14,7 @@ import "../styles/project-row.css"
 const HEADLINE = "Full stack developer. I build and ship products end to end, from Next.js frontends to serverless infrastructure."
 
 const BIO_PARAGRAPHS = [
-  "Based in Delhi, India. Cloud stays in the toolkit as a differentiator — not the identity — while the day-to-day is writing the frontend, the API, and the infrastructure it all runs on.",
+  "Based in Delhi, India. Day to day that means writing the frontend, the API, and the infrastructure it all runs on.",
 
   "I enjoy working on projects where software has to move beyond a prototype and perform reliably in real-world conditions. For me, the most interesting part is understanding the constraints, solving the engineering problems, and turning an idea into something that actually works.",
 
